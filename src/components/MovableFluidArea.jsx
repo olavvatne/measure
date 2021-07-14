@@ -37,9 +37,11 @@ const LabelLeftViewable = {
     props: {color: String, displayName: String, valueLeft: Number},
     events: {},
     render(moveable, React) {
+        // function onChange(e) {
+        //     moveable.props.onValueLeft
+        // }
         const rect = moveable.getRect();
         const { pos2 } = moveable.state;
-        
         const transform = `translate(${pos2[0]}px, ${pos2[1]}px) rotate(${rect.rotation}deg)  translate(${-rect.offsetWidth- 30}px, -50px)`
         return <div key={"label-viewer-left"} 
             className={"moveable-label-left"} 
@@ -59,7 +61,10 @@ const LabelLeftViewable = {
                 transformOrigin: "0px 0px"
         }}>
             <label style={{display: "block"}}>Start {moveable.props.displayName}</label>
-            <label style={{textAlign: "center"}}>{moveable.props.valueLeft}</label>
+            <input key={moveable.props.valueLeft} className="moveable-input" 
+                type='tel' pattern="^-?[0-9]\d*\.?\d*$"
+                style={{display: "block", margin: "auto", width: "30px", background: "transparent", color: "white"}} 
+                defaultValue={moveable.props.valueLeft} onBlur={moveable.props.onValueLeft}/>
         </div>
     }
 };
@@ -92,7 +97,10 @@ const LabelRightViewable = {
                 transformOrigin: "0px 0px"
         }}>
             <label style={{display: "block"}}>End {moveable.props.displayName}</label>
-            <label style={{textAlign: "center"}}>{moveable.props.valueRight}</label>
+            <input key={moveable.props.valueRight} className="moveable-input" 
+                type='tel' pattern="^-?[0-9]\d*\.?\d*$"
+                style={{display: "block", margin: "auto", width: "30px", background: "transparent", color: "white"}} 
+                defaultValue={moveable.props.valueRight} onBlur={moveable.props.onValueRight}/>
         </div>
     }
 };
@@ -105,7 +113,6 @@ const EdgeClickable = {
         const rect = moveable.getRect();
         const { pos2 } = moveable.state;
         function onFluidEdge(e) {
-            console.log(e.nativeEvent.offsetX);
             moveable.props.onEdge({position: e.nativeEvent.offsetX, name: moveable.props.name})
         }
         const padding = Math.max(30, rect.offsetWidth * 0.05);
@@ -113,7 +120,7 @@ const EdgeClickable = {
 		const lineInValue = moveable.props.valueRight - moveable.props.valueLeft;
         const lineToPos = moveable.props.fluidEdge - padding;
 		const edgeValue = (lineToPos / lineInPixel * lineInValue) + moveable.props.valueLeft;
-        
+
         const transform = `translate(${pos2[0]}px, ${pos2[1]}px) rotate(${rect.rotation}deg)  translate(${-rect.offsetWidth}px, 00px)`
         return <div key={"edge-clickable-viewer"} onClick={onFluidEdge} 
             className={"moveable-edge-clickable"} 
@@ -146,7 +153,7 @@ const EdgeClickable = {
                     left: moveable.props.fluidEdge, 
                     position: "relative"}}>
                     <label style={{position: "relative", left: - 30, top: "-80px"}}>
-                        {edgeValue.toFixed(3)}
+                        {edgeValue ? edgeValue.toFixed(3): null}
                     </label>
 
                     </div>
@@ -155,21 +162,53 @@ const EdgeClickable = {
     }
 };
 
-export function MovableFluidArea({name, color, displayName, position, disabled}) {
+export function MovableFluidArea({imageId, name, color, displayName, disabled, measureValues}) {
+    
     const [helper] = React.useState(() => {
         return new MoveableHelper();
     })
-
-    const [edge, setEdge] = React.useState(0);
-    position = position === "left" ? "150px" : "500px";
-    const targetRef = React.useRef(null);
     
+    const [edge, setEdge] = React.useState(0);
+
+    const targetRef = React.useRef(null);
+    const moveableRef = React.useRef(null);
+    
+    React.useEffect(() => {
+        if (moveableRef.current) {
+
+            var frame = helper.createFrame(targetRef.current);
+            if (measureValues && measureValues.rotation) {
+                moveableRef.current.moveable.rotation = measureValues.rotation;
+                frame.properties.transform.rotate = measureValues.rotation + "deg";
+                moveableRef.current.moveable.request("rotatable", { rotate: measureValues.rotation }, true);
+
+            }
+
+            if (measureValues && measureValues.offsetHeight && measureValues.offsetWidth) {
+                moveableRef.current.moveable.request("resizable", { offsetWidth: measureValues.offsetWidth, offsetHeight: measureValues.offsetHeight }, true);
+            }
+
+            if (measureValues && measureValues.x && measureValues.y) {
+                moveableRef.current.moveable.request("draggable", { x: measureValues.x, y: measureValues.y }, true);
+            }
+           
+            moveableRef.current.moveable.updateRect();
+            moveableRef.current.moveable.updateTarget();
+        }
+    }, [targetRef])
+
+    if (!measureValues || Object.keys(measureValues).length === 0) {
+        return null;
+    }
+    const s = window.measure[name];
+    const transform = `rotate(${s.rotation || 0}deg)`;
     return <div className="fluid-area">
-        <div className="target" ref={targetRef} style={{"left": position}}>
-            
+        <div className="target" ref={targetRef} style={{transform: transform, top: measureValues.y, left: measureValues.x, width: s.offsetWidth+"px", height: s.offsetHeight+"px"}}>
         </div>
         <Moveable
             className={name + " " + color}
+            key={imageId + name}
+            ref={moveableRef}
             target={targetRef}
             ables={[DimensionViewable, LabelLeftViewable, LabelRightViewable, EdgeClickable]}
             props={{
@@ -180,42 +219,77 @@ export function MovableFluidArea({name, color, displayName, position, disabled})
                 name: name,
                 fluidEdge: edge,
                 displayName: displayName,
-                valueLeft: 10,
-                valueRight: 20,
+                valueLeft: measureValues.minValue,
+                valueRight: measureValues.maxValue,
                 color: color,
+                onValueRight: (e) => {
+                    if (e.target.validity.valid) {
+                        window.measure[name] = {...window.measure[name], maxValue: parseFloat(e.target.value)};
+                    }
+                },
+                onValueLeft: (e) => {
+                    if (e.target.validity.valid) {
+                        window.measure[name] = {...window.measure[name], minValue: parseFloat(e.target.value)};
+                    }
+                },
                 onEdge: (e) => {
                     setEdge(e.position);
-                }
+                },
             }}
             renderDirections={["n", "s", "w", "e"]}
-            
             origin={false}
             draggable={!disabled}
             resizable={!disabled}
             rotatable={!disabled}
-            onDragStart={helper.onDragStart}
-            onDrag={helper.onDrag}
+            onDragStart={e => {
+                helper.onDragStart(e)
+            }}
+            onDrag={e => {
+                helper.onDrag(e)
+            }}
+            onDragEnd={(e) => {
+                const targetMap = helper.map.get(e.target);
+                const newX = (measureValues.x || 0) + parseFloat(targetMap.properties.transform.translate.value[0].replace("px", ""));
+                const newY =  (measureValues.y || 0) + parseFloat(targetMap.properties.transform.translate.value[1].replace("px", ""));
+                window.measure[name] = {...window.measure[name], x: newX, y: newY}
+            }}
             onResizeStart={helper.onResizeStart}
             onResize={helper.onResize}
+            onResizeEnd={(e) => {
+                const targetMap = helper.map.get(e.target);
+                const newX = (measureValues.x || 0) + parseFloat(targetMap.properties.transform.translate.value[0].replace("px", ""));
+                const newY =  (measureValues.y || 0) + parseFloat(targetMap.properties.transform.translate.value[1].replace("px", ""));
+                window.measure[name] = {...window.measure[name], y: newY, x: newX, offsetHeight: e.lastEvent.offsetHeight, offsetWidth: e.lastEvent.offsetWidth}
+            }}
             onRotateStart={helper.onRotateStart}
             onRotate={helper.onRotate}
+          
+            onRotateEnd={(e) => {
+                if (!window.measure[name].rotation) {
+                    window.measure[name] = {...window.measure[name], rotation: e.lastEvent.rotate};
+                }
+                else if (Math.abs(window.measure[name].rotation - e.lastEvent.rotate) > 0.001) {
+                    window.measure[name] = {...window.measure[name], rotation: e.lastEvent.rotate};
+                }
+                }}
             />
     </div>;
 }
 
 MovableFluidArea.propTypes = {
     name: PropTypes.string,
+    imageId: PropTypes.string,
     color: PropTypes.string,
     displayName: PropTypes.string,
-    position: PropTypes.string,
-    position: PropTypes.string,
+    measureValues: PropTypes.object,
     disabled: PropTypes.bool,
 };
 
 MovableFluidArea.defaultProps = {
+    imageId: "",
     name: "og",
     color: "red",
     displayName: "O/G",
-    position: "left",
+    measureValues: {minValue: 5, minValue: 10, rotation: 0, x: 20, y: 20, offsetWidth: 200, offsetHeight: 200},
     disabled: false,
   };

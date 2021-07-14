@@ -70,7 +70,7 @@ ipcMain.handle( 'app:on-fs-dialog-open', async () => {
           files.push({
             path: imgFiles[j],
             date: DateTimeOriginal,
-            thumbnail: thumbnail,
+            // thumbnail: thumbnail,
           });
         }
       }

@@ -3,9 +3,7 @@ import { useTable } from "react-table"
 import { createGuid, createHash } from "./utils/guid.js";
 import { store } from "../store.js";
 import Moment from "moment";
-import {
-    useHistory ,
-  } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 export default function OverviewView() {
     const globalState = useContext(store);
@@ -27,7 +25,6 @@ export default function OverviewView() {
                     prevId 
                 };
             }
-            console.log(data);
             dispatch({ type: "ImagesChangeAction", data });
         })
     }
@@ -41,7 +38,7 @@ export default function OverviewView() {
      
         []
     )
-    console.log(state.images);
+
     const tableInstance = useTable({ columns, data: Object.values(state.images) })
     
     const {

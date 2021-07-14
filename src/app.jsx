@@ -3,12 +3,8 @@ import * as ReactDOM from "react-dom";
 import ImageView from "./components/ImageView.jsx";
 import OverviewView from "./components/OverviewView.jsx";
 import { StateProvider } from './store.js';
-import {
-    HashRouter as Router,
-    Switch,
-    Route,
-    Link,
-  } from "react-router-dom";
+import { HashRouter as Router, Route, } from "react-router-dom";
+
 function App() {
     return (
         <StateProvider>

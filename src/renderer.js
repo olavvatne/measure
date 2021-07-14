@@ -10,5 +10,3 @@ window.openDialog = () => {
 window.getImage = (imgPath) => {
     return ipcRenderer.invoke( 'app:on-fs-image-open', imgPath);
 }
-
-console.log('👋 This message is being logged by "renderer.js", included via webpack');
