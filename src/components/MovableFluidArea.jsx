@@ -105,6 +105,25 @@ const LabelRightViewable = {
     }
 };
 
+function posToValue(pos, padding, width, valueLeft, valueRight) {
+    const lineInPixel = width - 2 * padding;
+    const lineInValue = valueRight - valueLeft;
+    const lineToPos = pos - padding;
+    const edgeValue = (lineToPos / lineInPixel * lineInValue) + valueLeft;
+    return edgeValue;
+}
+
+function valueToPos(value, padding, width, valueLeft, valueRight) {
+    if (value === null) {
+        return null;
+    }
+    const lineInPixel = width - 2 * padding;
+    const lineInValue = valueRight - valueLeft;
+    const valueToPos = (value - valueLeft) / lineInValue * lineInPixel;
+    const posWithpadding = valueToPos + padding;
+    return posWithpadding;
+}
+
 const EdgeClickable = {
     name: "EdgeClickable",
     props: {color: String, onEdge: Function, name: String, fluidEdge: Number, valueLeft: Number, valueRight: Number},
@@ -113,13 +132,13 @@ const EdgeClickable = {
         const rect = moveable.getRect();
         const { pos2 } = moveable.state;
         function onFluidEdge(e) {
-            moveable.props.onEdge({position: e.nativeEvent.offsetX, name: moveable.props.name})
+            const padding = Math.max(30, rect.offsetWidth * 0.05);
+            const value = posToValue( e.nativeEvent.offsetX, padding, rect.offsetWidth, moveable.props.valueLeft, moveable.props.valueRight);
+            moveable.props.onEdge({value, name: moveable.props.name})
         }
         const padding = Math.max(30, rect.offsetWidth * 0.05);
-        const lineInPixel = rect.offsetWidth - 2 * padding;
-		const lineInValue = moveable.props.valueRight - moveable.props.valueLeft;
-        const lineToPos = moveable.props.fluidEdge - padding;
-		const edgeValue = (lineToPos / lineInPixel * lineInValue) + moveable.props.valueLeft;
+        const pos = valueToPos(moveable.props.fluidEdge, padding, rect.offsetWidth, moveable.props.valueLeft, moveable.props.valueRight);
+        const edgeValue = moveable.props.fluidEdge;
 
         const transform = `translate(${pos2[0]}px, ${pos2[1]}px) rotate(${rect.rotation}deg)  translate(${-rect.offsetWidth}px, 00px)`
         return <div key={"edge-clickable-viewer"} onClick={onFluidEdge} 
@@ -130,7 +149,6 @@ const EdgeClickable = {
                 top: `0px`,
                 color: "white",
                 fontSize: "13px",
-                // padding: `0px ${padding}px`,
                 whiteSpace: "nowrap",
                 fontWeight: "bold",
                 willChange: "transform",
@@ -147,28 +165,28 @@ const EdgeClickable = {
                     height: rect.offsetHeight,
                     left: padding,
                 }}></div>
-                <div className="edge-line" style={{
+                {pos !== null ? <div className="edge-line" style={{
                     width: "1px",
                     height: rect.offsetHeight, 
-                    left: moveable.props.fluidEdge, 
+                    left: pos, 
                     position: "relative"}}>
                     <label style={{position: "relative", left: - 30, top: "-80px"}}>
                         {edgeValue ? edgeValue.toFixed(3): null}
                     </label>
 
-                    </div>
+                    </div>: null }
             </div>
         </div>
     }
 };
 
-export function MovableFluidArea({imageId, name, color, displayName, disabled, measureValues}) {
+export function MovableFluidArea({imageId, name, color, displayName, disabled, measureValues, value, setValue}) {
     
     const [helper] = React.useState(() => {
         return new MoveableHelper();
     })
     
-    const [edge, setEdge] = React.useState(0);
+    // const [edge, setEdge] = React.useState(value);
 
     const targetRef = React.useRef(null);
     const moveableRef = React.useRef(null);
@@ -217,7 +235,7 @@ export function MovableFluidArea({imageId, name, color, displayName, disabled, m
                 LabelRightViewable: true,
                 EdgeClickable: true,
                 name: name,
-                fluidEdge: edge,
+                fluidEdge: value,
                 displayName: displayName,
                 valueLeft: measureValues.minValue,
                 valueRight: measureValues.maxValue,
@@ -233,7 +251,8 @@ export function MovableFluidArea({imageId, name, color, displayName, disabled, m
                     }
                 },
                 onEdge: (e) => {
-                    setEdge(e.position);
+                    setValue(e.value);
+                    // window.measure[name] = {...window.measure[name], value: e.value};
                 },
             }}
             renderDirections={["n", "s", "w", "e"]}
@@ -283,6 +302,8 @@ MovableFluidArea.propTypes = {
     displayName: PropTypes.string,
     measureValues: PropTypes.object,
     disabled: PropTypes.bool,
+    value: PropTypes.number,
+    setValue: PropTypes.func,
 };
 
 MovableFluidArea.defaultProps = {
@@ -292,4 +313,6 @@ MovableFluidArea.defaultProps = {
     displayName: "O/G",
     measureValues: {minValue: 5, minValue: 10, rotation: 0, x: 20, y: 20, offsetWidth: 200, offsetHeight: 200},
     disabled: false,
+    value: null,
+    setValue: () => {}
   };

@@ -1,0 +1,25 @@
+.overview-table td {
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    padding: 2px;
+}
+
+.overview-table {
+    /* width: 100%; */
+}
+
+.overview-table .resizer {
+    display: inline-block;
+    background: blue;
+    width: 10px;
+    height: 100%;
+    position: absolute;
+    right: 0;
+    top: 0;
+    transform: translateX(50%);
+    z-index: 1;
+}
+
+.overview-table .isResizing {
+    background: red;  
+}

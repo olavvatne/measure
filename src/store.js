@@ -84,6 +84,8 @@ const StateProvider = ( { children } ) => {
         }
         let union = new Set([...Object.keys(newValues), ...Object.keys(current)]);
         union.delete("fromDate");
+        union.delete("value");
+        union.delete("id");
         // union = union.filter(x => x !== "fromDate");
         const uniqueKeys = [...union];
         let isEqual = true;
@@ -93,21 +95,36 @@ const StateProvider = ( { children } ) => {
             break;
           }
         }
+
+        const newImages = {
+          ...state.images,
+          [action.data.id]: {
+            ...state.images[action.data.id],
+            ogValue: action.data.recordedValues.og,
+            owValue: action.data.recordedValues.ow,
+          }
+        };
+
         if(isEqual) {
-          return {...state};
+          return {...state, images: newImages};
         }
        
-        newState = {...state, historicMeasurer: {...state.historicMeasurer,
-          [action.data.name]: { ...state.historicMeasurer[action.data.name],
-            [dateUnix + ""]: {
-              ...newValues,
-              fromDate: dateUnix,
-            }
-          }
-        }};
+        newState = {
+          ...state, 
+          historicMeasurer: {
+            ...state.historicMeasurer,
+            [action.data.name]: {
+              ...state.historicMeasurer[action.data.name],
+              [dateUnix + ""]: {
+                ...newValues,
+                fromDate: dateUnix,
+              }
+          },
+        },
+        images: newImages
+        };
       }
       return newState;
-
       default:
         throw new Error();
     };
