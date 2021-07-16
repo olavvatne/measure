@@ -180,14 +180,12 @@ const EdgeClickable = {
     }
 };
 
-export function MovableFluidArea({imageId, name, color, displayName, disabled, measureValues, value, setValue}) {
+export function MovableFluidArea({imageId, name, color, displayName, disabled, measureValues, value, setValue, setMeasureValues}) {
     
     const [helper] = React.useState(() => {
         return new MoveableHelper();
     })
     
-    // const [edge, setEdge] = React.useState(value);
-
     const targetRef = React.useRef(null);
     const moveableRef = React.useRef(null);
     
@@ -218,7 +216,7 @@ export function MovableFluidArea({imageId, name, color, displayName, disabled, m
     if (!measureValues || Object.keys(measureValues).length === 0) {
         return null;
     }
-    const s = window.measure[name];
+    const s = measureValues;
     const transform = `rotate(${s.rotation || 0}deg)`;
     return <div className="fluid-area">
         <div className="target" ref={targetRef} style={{transform: transform, top: measureValues.y, left: measureValues.x, width: s.offsetWidth+"px", height: s.offsetHeight+"px"}}>
@@ -242,17 +240,16 @@ export function MovableFluidArea({imageId, name, color, displayName, disabled, m
                 color: color,
                 onValueRight: (e) => {
                     if (e.target.validity.valid) {
-                        window.measure[name] = {...window.measure[name], maxValue: parseFloat(e.target.value)};
+                        setMeasureValues({...measureValues, maxValue: parseFloat(e.target.value)});
                     }
                 },
                 onValueLeft: (e) => {
                     if (e.target.validity.valid) {
-                        window.measure[name] = {...window.measure[name], minValue: parseFloat(e.target.value)};
+                        setMeasureValues({...measureValues, minValue: parseFloat(e.target.value)});
                     }
                 },
                 onEdge: (e) => {
                     setValue(e.value);
-                    // window.measure[name] = {...window.measure[name], value: e.value};
                 },
             }}
             renderDirections={["n", "s", "w", "e"]}
@@ -270,7 +267,7 @@ export function MovableFluidArea({imageId, name, color, displayName, disabled, m
                 const targetMap = helper.map.get(e.target);
                 const newX = (measureValues.x || 0) + parseFloat(targetMap.properties.transform.translate.value[0].replace("px", ""));
                 const newY =  (measureValues.y || 0) + parseFloat(targetMap.properties.transform.translate.value[1].replace("px", ""));
-                window.measure[name] = {...window.measure[name], x: newX, y: newY}
+                setMeasureValues({...measureValues, x: newX, y: newY});
             }}
             onResizeStart={helper.onResizeStart}
             onResize={helper.onResize}
@@ -278,17 +275,17 @@ export function MovableFluidArea({imageId, name, color, displayName, disabled, m
                 const targetMap = helper.map.get(e.target);
                 const newX = (measureValues.x || 0) + parseFloat(targetMap.properties.transform.translate.value[0].replace("px", ""));
                 const newY =  (measureValues.y || 0) + parseFloat(targetMap.properties.transform.translate.value[1].replace("px", ""));
-                window.measure[name] = {...window.measure[name], y: newY, x: newX, offsetHeight: e.lastEvent.offsetHeight, offsetWidth: e.lastEvent.offsetWidth}
+                setMeasureValues({...measureValues, y: newY, x: newX, offsetHeight: e.lastEvent.offsetHeight, offsetWidth: e.lastEvent.offsetWidth});
             }}
             onRotateStart={helper.onRotateStart}
             onRotate={helper.onRotate}
           
             onRotateEnd={(e) => {
-                if (!window.measure[name].rotation) {
-                    window.measure[name] = {...window.measure[name], rotation: e.lastEvent.rotate};
+                if (!measureValues.rotation) {
+                    setMeasureValues({...measureValues, rotation: e.lastEvent.rotate});
                 }
-                else if (Math.abs(window.measure[name].rotation - e.lastEvent.rotate) > 0.001) {
-                    window.measure[name] = {...window.measure[name], rotation: e.lastEvent.rotate};
+                else if (Math.abs(measureValues.rotation - e.lastEvent.rotate) > 0.001) {
+                    setMeasureValues({...wmeasureValues, rotation: e.lastEvent.rotate});
                 }
                 }}
             />
@@ -304,6 +301,7 @@ MovableFluidArea.propTypes = {
     disabled: PropTypes.bool,
     value: PropTypes.number,
     setValue: PropTypes.func,
+    setMeasureValues: PropTypes.func,
 };
 
 MovableFluidArea.defaultProps = {
@@ -314,5 +312,6 @@ MovableFluidArea.defaultProps = {
     measureValues: {minValue: 5, minValue: 10, rotation: 0, x: 20, y: 20, offsetWidth: 200, offsetHeight: 200},
     disabled: false,
     value: null,
-    setValue: () => {}
+    setValue: () => {},
+    setMeasureValues: () => {}
   };

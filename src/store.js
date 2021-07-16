@@ -76,55 +76,65 @@ const StateProvider = ( { children } ) => {
         return newState;
       }
       case 'NewMeasureValuesAction': {
-        const current = state.currentMeasurer[action.data.name];
-        const dateUnix = action.data.dateUnix;
-        const newValues = action.data.values;
-        if (!current || !newValues) {
-          return {...state};
-        }
-        let union = new Set([...Object.keys(newValues), ...Object.keys(current)]);
-        union.delete("fromDate");
-        union.delete("value");
-        union.delete("id");
-        // union = union.filter(x => x !== "fromDate");
-        const uniqueKeys = [...union];
-        let isEqual = true;
-        for (let i = 0; i < uniqueKeys.length; i++) {
-          if (newValues[uniqueKeys[i]] !== current[uniqueKeys[i]]) {
-            isEqual = false;
-            break;
-          }
-        }
+        const measureKeys = Object.keys(action.data);
+        let newState = {...state};
 
-        const newImages = {
-          ...state.images,
-          [action.data.id]: {
-            ...state.images[action.data.id],
-            ogValue: action.data.recordedValues.og,
-            owValue: action.data.recordedValues.ow,
-          }
-        };
+        for (let i = 0; i < measureKeys.length; i ++) {
+          const k = measureKeys[i];
+          const d = action.data[k];
 
-        if(isEqual) {
-          return {...state, images: newImages};
-        }
-       
-        newState = {
-          ...state, 
-          historicMeasurer: {
-            ...state.historicMeasurer,
-            [action.data.name]: {
-              ...state.historicMeasurer[action.data.name],
-              [dateUnix + ""]: {
-                ...newValues,
-                fromDate: dateUnix,
-              }
+          const current = state.currentMeasurer[k];
+          const dateUnix = d.dateUnix;
+          const newValues = d.values;
+          if (!current || !newValues) {
+            continue;
+            // return {...state};
+          }
+
+          let union = new Set([...Object.keys(newValues), ...Object.keys(current)]);
+          union.delete("fromDate");
+          union.delete("value");
+          union.delete("id");
+          // union = union.filter(x => x !== "fromDate");
+          const uniqueKeys = [...union];
+          let isEqual = true;
+          for (let i = 0; i < uniqueKeys.length; i++) {
+            if (newValues[uniqueKeys[i]] !== current[uniqueKeys[i]]) {
+              isEqual = false;
+              break;
+            }
+          }
+  
+          const newImages = {
+            ...newState.images,
+            [d.id]: {
+              ...newState.images[d.id],
+              [d.name + "Value"]: d.recordedValues[d.name],
+            }
+          };
+  
+          if(isEqual) {
+            newState  = {...newState, images: newImages};
+            continue;
+          }
+          newState = {
+            ...newState, 
+            historicMeasurer: {
+              ...newState.historicMeasurer,
+              [d.name]: {
+                ...newState.historicMeasurer[d.name],
+                [dateUnix + ""]: {
+                  ...newValues,
+                  fromDate: dateUnix,
+                }
+            },
           },
-        },
-        images: newImages
-        };
+          images: newImages
+          };
+        }
+        return newState;
       }
-      return newState;
+       
       default:
         throw new Error();
     };

@@ -54,7 +54,7 @@ export default function OverviewView() {
                     if (!row.fromDate) {
                         return "";
                     }
-                    return `W: ${row.offsetWidth.toFixed(2)} H: ${row.offsetHeight.toFixed(2)} X: ${row.x.toFixed(2)} Y: ${row.y.toFixed(2)}`;
+                    return `W: ${row.offsetWidth.toFixed(2)} H: ${row.offsetHeight.toFixed(2)} X: ${row.x.toFixed(2)} Y: ${row.y.toFixed(2)} R: ${(row.rotation || 0).toFixed(2)}`;
                 },
             },
             { Header: "Path", accessor: "path", width: 80},
@@ -64,17 +64,17 @@ export default function OverviewView() {
     )
 
     const data = React.useMemo(() => {
-        const og = Object.values(state.historicMeasurer.og);
-        const ow = Object.values(state.historicMeasurer.ow);
-        og.map((m) => {
+        let og = Object.values(state.historicMeasurer.og);
+        let ow = Object.values(state.historicMeasurer.ow);
+        og = og.filter(m => m.fromDate > 0).map((m) => {
             m.id = "og";
             return m;
         });
-        ow.map((m) => {
+        ow = ow.filter(m => m.fromDate > 0).map((m) => {
             m.id = "ow";
             return m;
         })
-
+        console.log(og);
         return [...og, ...ow, ...Object.values(state.images)]; 
     }, [state.images]);
 
@@ -113,8 +113,8 @@ export default function OverviewView() {
 
     return (
         <div>
-            <h2>Overview</h2>
-            <button onClick={() => readFolder()}>test</button>
+            <button onClick={() => readFolder()}>Import images</button>
+            <button onClick={() => readFolder()}>Export CSV</button>
             <table {...getTableProps()} className="overview-table">
                 <thead>
                     {headerGroups.map(headerGroup => (

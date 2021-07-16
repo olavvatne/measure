@@ -13,17 +13,13 @@ export default function ImageView() {
     let history = useHistory();
     const image = state.images[guid] || {};
     const [imageMode, setImageMode] = useState(false);
-    const [fluidValues, setFluidValues] = useState({});
-    // const [owValue, setOwValue] = useState(null);
-    if (!window.keepView) {
-        window.keepView = true;
-        window.measure = {og: state?.currentMeasurer.og, ow: state?.currentMeasurer.ow };
-    }
+    const [fluidValues, setFluidValues] = useState({og: image.ogValue, ow: image.owValue});
+    const [measure, setMeasure] = useState({og: state?.currentMeasurer.og, ow: state?.currentMeasurer.ow});
+
 
     useEffect(() => {
         if (!window.getImage) return;
-        // setOgValue(image.ogValue);
-        setFluidValues({og: image.ogValue, ow: image.owValue});
+
         const dateUnix = image.date;
         dispatch({ type: "SetCurrentMeasurerAction", data: {dateUnix} });
         window.getImage(image.path).then(content => {
@@ -44,33 +40,38 @@ export default function ImageView() {
         });
     }, [image?.path]);
 
+    useEffect(() => {
+        setMeasure({og: state?.currentMeasurer.og, ow: state?.currentMeasurer.ow });
+    }, [image.id, JSON.stringify(state.currentMeasurer)])
+
+    useEffect(() => {
+        setFluidValues({og: image.ogValue, ow: image.owValue});
+    }, [image.id, JSON.stringify(state.images[guid])])
+
     useKeypress("q", () => {
         setImageMode(!imageMode)
     }, [imageMode]);
 
     useKeypress("ArrowRight", () => {
         next();
-    }, [image.nextId]);
+    }, [image.id, image, measure, fluidValues]);
 
-    useKeypress("ArrowLeft", () => {
+    useKeypress("ArrowLeft", function() {
         prev();
-    }, [image.prevId]);
+    }, [image.id, image, measure, fluidValues]);
 
     function navigate(navUrl) {
-        // Two dispatch after each other mess with function arguments.
-        // Keep dispatch in same function / scope.
-        window.keepView = false;
-        const mv = JSON.parse(JSON.stringify(window.measure));
-        const fv = JSON.parse(JSON.stringify(fluidValues));
-        const ci = JSON.parse(JSON.stringify(image));
+        const mv = measure;
+        const fv = fluidValues;
+        const ci = image;
+
         const ogData = {dateUnix: ci.date, name: "og", values: mv.og, id: ci.id, recordedValues: fv};
         const owData = {dateUnix: ci.date, name: "ow", values: mv.ow, id: ci.id, recordedValues: fv};
-        if (ogData.dateUnix) {
-            dispatch({ type: "NewMeasureValuesAction", data: ogData});
+        const data = {og: ogData, ow: owData};
+        if (ogData.dateUnix || owData.dateUnix) {
+            dispatch({ type: "NewMeasureValuesAction", data});
         }
-        if (owData.dateUnix) {
-            dispatch({ type: "NewMeasureValuesAction", data: owData});
-        }
+
         history.push(navUrl);
     }
 
@@ -107,7 +108,7 @@ export default function ImageView() {
             </div>
             <ImageMoverArea imageMode={imageMode}>
                 <MovableFluidArea 
-                    key={JSON.stringify(window.measure.og) + JSON.stringify(fluidValues.og) + image.id + "og"}
+                    key={JSON.stringify(measure.og) + JSON.stringify(fluidValues.og || null) + image.id + "og"}
                     imageId={image.id}
                     name="og"
                     displayName="O/G" 
@@ -116,11 +117,12 @@ export default function ImageView() {
                     disabled={imageMode} 
                     value={fluidValues.og}
                     setValue={v => setFluidValues({og: v, ow: fluidValues.ow})}
-                    measureValues={window.measure.og}>
+                    measureValues={measure.og}
+                    setMeasureValues={v => setMeasure({og: v, ow: measure.ow})}>
 
                 </MovableFluidArea>
                 <MovableFluidArea 
-                    key={JSON.stringify(window.measure.ow) + JSON.stringify(fluidValues.ow) +  image.id + "ow"}
+                    key={JSON.stringify(measure.ow) + JSON.stringify(fluidValues.ow || null) +  image.id + "ow"}
                     imageId={image.id} 
                     name="ow" displayName="O/W"
                     color="blue"
@@ -128,7 +130,8 @@ export default function ImageView() {
                     disabled={imageMode}
                     value={fluidValues.ow}
                     setValue={v => setFluidValues({ow: v, og: fluidValues.og})}
-                    measureValues={window.measure.ow}> 
+                    measureValues={measure.ow}
+                    setMeasureValues={v => setMeasure({ow: v, og: measure.og})}> 
                 </MovableFluidArea>
                 <img id="image-container"></img>
             </ImageMoverArea>
