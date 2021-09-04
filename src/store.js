@@ -109,7 +109,10 @@ const StateProvider = ( { children } ) => {
             ...newState.images,
             [d.id]: {
               ...newState.images[d.id],
-              [d.name + "Value"]: d.recordedValues[d.name],
+              values: {
+                ...newState.images[d.id].values,
+                [d.name]: d.recordedValues[d.name],
+              }
             }
           };
   

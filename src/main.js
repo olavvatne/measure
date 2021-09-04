@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, dialog } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, nativeTheme } = require('electron');
 const fs = require("fs");
 const path = require('path');
 var exifr = require('exifr')
@@ -8,6 +8,7 @@ const { promisify } = require('util')
 if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
   app.quit();
 }
+let measureWindow = null;
 
 const createWindow = () => {
   // Create the browser window.
@@ -15,8 +16,9 @@ const createWindow = () => {
     width: 800,
     height: 600,
     webPreferences: {
-      contextIsolation: false,
-      nodeIntegration: true,
+      contextIsolation: true,
+      nodeIntegration: false,
+      preload: path.join(__dirname, 'preload.js')
     }
   });
 
@@ -25,6 +27,7 @@ const createWindow = () => {
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
+  measureWindow = mainWindow;
 };
 
 // This method will be called when Electron has finished
@@ -66,7 +69,7 @@ ipcMain.handle( 'app:on-fs-dialog-open', async () => {
         imgFiles = imgFiles.map(f => path.join(dir, f));
         for (let j = 0; j < imgFiles.length; j ++) {
           const { DateTimeOriginal } = await exifr.parse(imgFiles[j], ["DateTimeOriginal"]);
-          const thumbnail = await exifr.thumbnail(imgFiles[j])
+          // const thumbnail = await exifr.thumbnail(imgFiles[j])
           files.push({
             path: imgFiles[j],
             date: DateTimeOriginal,
@@ -84,5 +87,17 @@ ipcMain.handle( 'app:on-fs-image-open', async (_, imgPath) => {
   var image = await readFileAsync(imgPath)
   return image;
 } );
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and import them here.
+
+ipcMain.handle('dark-mode:current', () => {
+  return nativeTheme.shouldUseDarkColors
+})
+
+ipcMain.handle('dark-mode:toggle', () => {
+  if (nativeTheme.shouldUseDarkColors) {
+    nativeTheme.themeSource = 'light'
+  } else {
+    nativeTheme.themeSource = 'dark'
+  }
+  measureWindow.webContents.send('dark-mode-updated', nativeTheme.shouldUseDarkColors);
+  return nativeTheme.shouldUseDarkColors
+})

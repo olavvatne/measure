@@ -1,5 +1,5 @@
-import React, { useContext, useMemo } from "react";
-import { useTable, useSortBy, useFlexLayout, useResizeColumns, useBlockLayout, useAbsoluteLayout } from "react-table"
+import React, { useContext, useMemo, useState } from "react";
+import { useTable, useSortBy, useResizeColumns, useBlockLayout, useAbsoluteLayout, usePagination } from "react-table"
 import { createGuid, createHash } from "./utils/guid.js";
 import { store } from "../store.js";
 import Moment from "moment";
@@ -9,9 +9,13 @@ import "./OverviewView.css";
 export default function OverviewView() {
     const globalState = useContext(store);
     const { dispatch, state } = globalState;
+    const [isLoading, setLoading ] =  useState(false);
+
     let history = useHistory();
+
     function readFolder() {
-        window.openDialog().then(async files => {
+        setLoading(true);
+        window.fileApi.openDialog().then(async files => {
             var data = {};
             console.log(files);
             for (let i = 0; i < files.length; i++) {
@@ -22,13 +26,42 @@ export default function OverviewView() {
                     id: guid,
                     path: files[i].path,
                     date: Moment(files[i].date).unix(),
+                    values: {},
                     nextId,
                     prevId
                 };
             }
+            setLoading(false);
             dispatch({ type: "ImagesChangeAction", data });
+        }).catch(() => {
+            setLoading(false);
         })
     }
+
+    function exportToCsv() {
+        const data = Object.values(state.images).sort((a, b) => a.date < b.date);
+        let csv = "Date,Time,Unix,OG,OW\n";
+        for (let i = 0; i < data.length; i++) {
+            if (data[i].values.og || data[i].values.ow) {
+                var m = Moment.unix(data[i].date);
+                csv += `${m.format("MM/DD/YY")},${m.format("HH:mm:ss")},${data[i].date},${data[i].values.og || ""},${data[i].values.ow || ""}\n`;
+            }
+        }
+        var exportedFilename = createGuid() + ".csv";
+
+        var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        var link = document.createElement('a')
+        if (link.download !== undefined) {
+          var url = URL.createObjectURL(blob)
+          link.setAttribute('href', url)
+          link.setAttribute('download', exportedFilename)
+          link.style.visibility = 'hidden'
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+        }
+    }
+
     const columns = useMemo(
 
         () => [
@@ -39,8 +72,8 @@ export default function OverviewView() {
                     return t;
                 }
             },
-            { Header: "O/G", accessor: "ogValue", width: 50},
-            { Header: "O/W", accessor: "owValue", width: 50},
+            { Header: "O/G", accessor: row => row.values?.og ? row.values.og.toFixed(3) : undefined, width: 60},
+            { Header: "O/W", accessor: row => row.values?.ow ? row.values.ow.toFixed(3): undefined, width: 60},
             {
                 Header: "Limits", accessor: row => {
                     if (!row.fromDate) {
@@ -93,15 +126,26 @@ export default function OverviewView() {
         },
         useSortBy,
         useBlockLayout,
-        useResizeColumns
+        useResizeColumns,
+        usePagination
     );
 
     const {
         getTableProps,
         getTableBodyProps,
         headerGroups,
-        rows,
+        // rows,
         prepareRow,
+        page,
+        canPreviousPage,
+        canNextPage,
+        pageOptions,
+        pageCount,
+        gotoPage,
+        nextPage,
+        previousPage,
+        setPageSize,
+        state: {pageIndex, pageSize}
     } = tableInstance
 
     function onRowClick(row) {
@@ -110,11 +154,14 @@ export default function OverviewView() {
         }
         history.push("/image/" + row.values.id);
     }
-
+    const buttonStyle = ""
     return (
         <div>
-            <button onClick={() => readFolder()}>Import images</button>
-            <button onClick={() => readFolder()}>Export CSV</button>
+            <button className={buttonStyle} onClick={() => readFolder()}>Import images</button>
+            <button className={buttonStyle} onClick={() => window.darkMode.toggle()}>Toggle</button>
+            <button className={buttonStyle} onClick={() => exportToCsv()} disabled={!Object.keys(state.images).length > 0}>Export CSV</button>
+            { isLoading ? <div className="center-spinner loader"></div> : null }
+            { data.length > 0 ? 
             <table {...getTableProps()} className="overview-table">
                 <thead>
                     {headerGroups.map(headerGroup => (
@@ -140,7 +187,7 @@ export default function OverviewView() {
                     ))}
                 </thead>
                 <tbody {...getTableBodyProps()}>
-                    {rows.map(row => {
+                    {page.map(row => {
                         prepareRow(row)
                         return (
                             <tr {...row.getRowProps()} onClick={props => onRowClick(row)} className={(row.original.fromDate !== undefined ? "measure-row": null)}>
@@ -154,6 +201,39 @@ export default function OverviewView() {
                     })}
                 </tbody>
             </table>
+        : null}
+        {data.length > 0 ? <div className="table-pagination">
+            <button className={buttonStyle} onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
+            {'<<'}
+            </button>{' '}
+            <button className={buttonStyle} onClick={() => previousPage()} disabled={!canPreviousPage}>
+            {'<'}
+            </button>{' '}
+            <button className={buttonStyle} onClick={() => nextPage()} disabled={!canNextPage}>
+            {'>'}
+            </button>{' '}
+            <button className={buttonStyle} onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>
+            {'>>'}
+            </button>
+            <span>
+            Page{' '}
+            <strong>
+                {pageIndex + 1} of {pageOptions.length}
+            </strong>{' '}
+            </span>
+            <select className={buttonStyle}
+                value={pageSize}
+                onChange={e => {
+                    setPageSize(Number(e.target.value))
+                }}
+                >
+                {[10, 20, 30, 40, 50].map(pageSize => (
+                    <option key={pageSize} value={pageSize}>
+                    Show {pageSize}
+                    </option>
+                ))}
+            </select>
+        </div> : null}
         </div>
     );
 }

@@ -13,16 +13,16 @@ export default function ImageView() {
     let history = useHistory();
     const image = state.images[guid] || {};
     const [imageMode, setImageMode] = useState(false);
-    const [fluidValues, setFluidValues] = useState({og: image.ogValue, ow: image.owValue});
+    const [fluidValues, setFluidValues] = useState({og: image.values.og, ow: image.values.ow});
     const [measure, setMeasure] = useState({og: state?.currentMeasurer.og, ow: state?.currentMeasurer.ow});
 
 
     useEffect(() => {
-        if (!window.getImage) return;
+        if (!window.fileApi.getImage) return;
 
         const dateUnix = image.date;
         dispatch({ type: "SetCurrentMeasurerAction", data: {dateUnix} });
-        window.getImage(image.path).then(content => {
+        window.fileApi.getImage(image.path).then(content => {
             const url = URL.createObjectURL( new Blob([content.buffer], { type: "image/png" }) );
             const img = document.getElementById("image-container");
             const rotate = true;
@@ -45,7 +45,7 @@ export default function ImageView() {
     }, [image.id, JSON.stringify(state.currentMeasurer)])
 
     useEffect(() => {
-        setFluidValues({og: image.ogValue, ow: image.owValue});
+        setFluidValues({og: image.values.og, ow: image.values.ow});
     }, [image.id, JSON.stringify(state.images[guid])])
 
     useKeypress("q", () => {
@@ -90,20 +90,19 @@ export default function ImageView() {
     function overview() {
         navigate("/");
     }
-
+    const checkStyle = imageMode ? "primary-button" : "secondary-button";
+    const buttonStyle = ""
     return (
-        <div className="image-container" style={{  overflow: "hidden"}}>
+        <div className="image-container">
             <div className="top-bar">
-                <button onClick={overview}>Overview</button>
-                <div>
-                    <label>Move image</label>
-                    <input type="checkbox" 
-                        checked={imageMode} 
-                        onChange={e => setImageMode(!imageMode)} />
-                </div>
+                <button className={buttonStyle} onClick={overview}>Overview</button>
+                <button className={"" + " " + checkStyle}
+                        onClick={e => setImageMode(!imageMode)}>
+                    Move image
+                </button>
                 <div className="controls">
-                    {image.prevId ? <button className="controls-prev" onClick={prev}>prev</button> : null }
-                    {image.nextId ? <button className="controls-next" onClick={next}>next</button> : null }
+                    {image.prevId ? <button className={"controls-prev " + buttonStyle} onClick={prev}>prev</button> : null }
+                    {image.nextId ? <button className={"controls-next " + buttonStyle} onClick={next}>next</button> : null }
                 </div>
             </div>
             <ImageMoverArea imageMode={imageMode}>

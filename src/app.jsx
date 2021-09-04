@@ -6,12 +6,17 @@ import { StateProvider } from './store.js';
 import { HashRouter as Router, Route, } from "react-router-dom";
 
 function App() {
+    // const [darkMode, setDarkMode] = useState(window.darkMode.current && window.darkMode.current());
+    // const containerClass = darkMode ? "dark-mode" : "light-mode";
+    // window.darkMode.onUpdated(async (sender, data) => {
+    //     setDarkMode(data)
+    // });
     return (
         <StateProvider>
             <Router>
                 <div>
                 <Route exact={true} path="/">
-                    <OverviewView />
+                    <OverviewView/>
                 </Route>
                 <Route path="/image/:guid">
                     <ImageView />
