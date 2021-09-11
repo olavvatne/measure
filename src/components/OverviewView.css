@@ -4,13 +4,9 @@
     padding: 2px;
 }
 
-.overview-table {
-    /* width: 100%; */
-}
 
 .overview-table .resizer {
     display: inline-block;
-    background: blue;
     width: 10px;
     height: 100%;
     position: absolute;
@@ -21,5 +17,5 @@
 }
 
 .overview-table .isResizing {
-    background: red;  
+    background: var(--text-bright);  
 }

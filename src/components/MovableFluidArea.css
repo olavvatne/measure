@@ -32,5 +32,5 @@
 }
 
 .measure-row {
-    background: brown;
+    background-color: var(--measure-row-background) !important;
 }

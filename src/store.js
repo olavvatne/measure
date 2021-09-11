@@ -40,6 +40,10 @@ const initialState = {
       scale: 1, 
       pointX: 0, 
       pointY: 0, 
+    },
+    table: {
+      pageIndex: 0,
+      pageSize: 20,
     }
 };
 const store = createContext(initialState);
@@ -51,6 +55,9 @@ const StateProvider = ( { children } ) => {
     switch(action.type) {
       case 'ViewChangeAction':
         newState = {...state, view: action.data };
+        return newState;
+      case 'TableChangeAction':
+        newState = {...state, table: {...state.table, ...action.data} };
         return newState;
       case 'ImagesChangeAction':
         newState = {...state, images: action.data };

@@ -4,13 +4,15 @@
     --background-body: #202124;
     --background-alt: #292a2d;
     --background: #454545;
-    --transparent-contrast: rgba(255, 255, 255, 0.2)
+    --transparent-contrast: rgba(255, 255, 255, 0.2);
+    --measure-row-background: #a52a2a;
   }
 }
 
 @media (prefers-color-scheme: light) {
   :root {
-    --transparent-contrast: rgba(0, 0, 0, 0.2)
+    --transparent-contrast: rgba(0, 0, 0, 0.2);
+    --measure-row-background: #db5959;
   }
 }
 
@@ -24,6 +26,10 @@ button {
   
 }
 
+select {
+  border-radius: 0;
+  display: inline-block;
+}
 td {
   white-space: nowrap;
 }
@@ -39,6 +45,7 @@ html, body {
   width: 100%;
   height: 100%;
   margin: 0px;
+  padding: 0;
   max-width: none !important;
 }
 
@@ -103,17 +110,19 @@ div#zoom > img {
 }
 
 .table-pagination {
+  border-top: 1px solid var(--border);
   position: fixed;
   left: 0;
   bottom: 0;
   width: 100%;
   padding: 5px;
+  background-color: var(--background-body);
 }
 
 
 
 .primary-button {
-  background-color: red;
+  background-color: #3CB371;
 }
 
 /* SPINNER */
