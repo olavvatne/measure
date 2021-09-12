@@ -4,8 +4,16 @@ import ImageView from "./components/ImageView.jsx";
 import OverviewView from "./components/OverviewView.jsx";
 import { StateProvider } from './store.js';
 import { HashRouter as Router, Route, } from "react-router-dom";
+import ImageAccessApi from "./utils/image-access";
+import {isElectron} from "./utils/platform-util";
 
 function App() {
+    console.log(isElectron());
+    if (!isElectron()) {
+        const api = new ImageAccessApi();
+        window.fileApi = api;
+    }
+
     return (
         <StateProvider>
             <Router>

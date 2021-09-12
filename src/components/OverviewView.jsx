@@ -1,5 +1,6 @@
 import React, { useContext, useMemo, useState } from "react";
 import { useTable, useSortBy, useResizeColumns, useBlockLayout, useAbsoluteLayout, usePagination } from "react-table"
+import {SunIcon, MoonIcon, ImageIcon, UploadIcon, DownloadIcon, PaperAirplaneIcon} from '@primer/octicons-react'
 import { createGuid, createHash } from "../utils/guid.js";
 import { store } from "../store.js";
 import Moment from "moment";
@@ -17,7 +18,7 @@ export default function OverviewView() {
 
     let history = useHistory();
 
-    function readFolder() {
+    async function readFolder() {
         setLoading(true);
         window.fileApi.openDialog().then(async files => {
             var data = {};
@@ -97,16 +98,28 @@ export default function OverviewView() {
         dispatch({ type: "HydrateAction", data });
     }
 
+    let isDarkMode = false;
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        isDarkMode = true;
+    }
+
+    function toggleDropdown() {
+        document.getElementById("export-dropdown").classList.toggle("show");
+    }
     return (
         <div>
             <div style={{padding: "5px"}}>
-                <button onClick={() => readFolder()}>Import images</button>
-                <button onClick={() => window.darkMode.toggle()}>Toggle</button>
-                <button onClick={() => exportToCsv(state.images)} disabled={!Object.keys(state.images).length > 0}>Export data to CSV</button>
+                <button onClick={() => readFolder()}><ImageIcon size={16} /></button>
+                <button onClick={() => window.darkMode.toggle()}>{isDarkMode ? <MoonIcon size={16} /> : <SunIcon size={16} />}</button>
+                <button onClick={toggleDropdown} disabled={!Object.keys(state.images).length > 0}><PaperAirplaneIcon size={16} /></button>
+                <div id="export-dropdown" className="dropdown-content">
+                    <a onClick={() => exportToCsv(state.images)}>Export to csv</a>
+                    <a href="#">Match and export to csv</a>
+                </div>
                 <label htmlFor="csv-timestamps">Import timestamps</label>
                 <input id="csv-timestamps" style={{display: "inline"}}type="file" name="file" onChange={e => matchAndExportToCsv(e.target.files[0], state.images)} />
-                <button onClick={() => window.fileApi.storeJson(persistState(state))}>Save</button>
-                <button onClick={onLoadAppData}>Open</button>
+                <button onClick={() => window.fileApi.storeJson(persistState(state))}><DownloadIcon size={16} /></button>
+                <button onClick={onLoadAppData}><UploadIcon size={16} /></button>
                 {/* <button className={buttonStyle} onClick={() => exportWithTimestampsToCsv()} disabled={!Object.keys(state.images).length > 0}>Matcht timestamps to CSV</button> */}
             </div>
             { isLoading ? <div className="center-spinner loader"></div> : null }

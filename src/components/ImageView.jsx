@@ -1,4 +1,5 @@
 import React, {useState, useEffect, useContext } from "react";
+import {ArrowLeftIcon, ArrowRightIcon, SearchIcon, RowsIcon} from '@primer/octicons-react'
 import { MovableFluidArea } from "./MovableFluidArea.jsx";
 import { ImageMoverArea } from "./ImageMoverArea.jsx";
 import { useKeypress } from "../utils/KeypressHook.jsx";
@@ -95,14 +96,20 @@ export default function ImageView() {
     return (
         <div className="image-container">
             <div className="top-bar">
-                <button className={buttonStyle} onClick={overview}>Overview</button>
+                <button className={buttonStyle} onClick={overview}>
+                    <RowsIcon size={16} />
+                </button>
                 <button className={"" + " " + checkStyle}
                         onClick={e => setImageMode(!imageMode)}>
-                    Move image
+                    <SearchIcon size={16} />
                 </button>
                 <div className="controls">
-                    {image.prevId ? <button className={"controls-prev " + buttonStyle} onClick={prev}>prev</button> : null }
-                    {image.nextId ? <button className={"controls-next " + buttonStyle} onClick={next}>next</button> : null }
+                    {image.prevId ? <button className={"controls-prev " + buttonStyle} onClick={prev}>
+                        <ArrowLeftIcon size={16} />
+                    </button> : null }
+                    {image.nextId ? <button className={"controls-next " + buttonStyle} onClick={next}>
+                        <ArrowRightIcon size={16} />
+                    </button> : null }
                 </div>
             </div>
             <ImageMoverArea imageMode={imageMode}>
