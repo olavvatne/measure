@@ -3,6 +3,8 @@ const { ipcRenderer, contextBridge, remote } = require('electron');
 contextBridge.exposeInMainWorld("fileApi", {
     openDialog: () =>  ipcRenderer.invoke( 'app:on-fs-dialog-open' ),
     getImage: (imgPath) =>  ipcRenderer.invoke( 'app:on-fs-image-open', imgPath),
+    storeJson: (json) =>  ipcRenderer.invoke( 'app:on-fs-json-store', json),
+    loadJson: () =>  ipcRenderer.invoke( 'app:on-fs-json-load'),
 });
 
 contextBridge.exposeInMainWorld('darkMode', {

@@ -1,13 +1,14 @@
 import React, { useContext, useMemo, useState } from "react";
 import { useTable, useSortBy, useResizeColumns, useBlockLayout, useAbsoluteLayout, usePagination } from "react-table"
-import { createGuid, createHash } from "./utils/guid.js";
+import { createGuid, createHash } from "../utils/guid.js";
 import { store } from "../store.js";
 import Moment from "moment";
 import { useHistory } from "react-router-dom";
 import "./OverviewView.css";
-import {exportToCsv, matchAndExportToCsv} from "./utils/csv-exporter";
+import {exportToCsv, matchAndExportToCsv} from "../utils/csv-exporter";
 import TableControls from "./TableControls.jsx";
 import TableView from "./TableView.jsx";
+import {persistState, hydrateState} from "../persist.js";
 
 export default function OverviewView() {
     const globalState = useContext(store);
@@ -90,6 +91,12 @@ export default function OverviewView() {
         history.push("/image/" + row.values.id);
     }
 
+    async function onLoadAppData() {
+        const jsonData = await window.fileApi.loadJson();
+        const data = hydrateState(jsonData);
+        dispatch({ type: "HydrateAction", data });
+    }
+
     return (
         <div>
             <div style={{padding: "5px"}}>
@@ -98,6 +105,8 @@ export default function OverviewView() {
                 <button onClick={() => exportToCsv(state.images)} disabled={!Object.keys(state.images).length > 0}>Export data to CSV</button>
                 <label htmlFor="csv-timestamps">Import timestamps</label>
                 <input id="csv-timestamps" style={{display: "inline"}}type="file" name="file" onChange={e => matchAndExportToCsv(e.target.files[0], state.images)} />
+                <button onClick={() => window.fileApi.storeJson(persistState(state))}>Save</button>
+                <button onClick={onLoadAppData}>Open</button>
                 {/* <button className={buttonStyle} onClick={() => exportWithTimestampsToCsv()} disabled={!Object.keys(state.images).length > 0}>Matcht timestamps to CSV</button> */}
             </div>
             { isLoading ? <div className="center-spinner loader"></div> : null }

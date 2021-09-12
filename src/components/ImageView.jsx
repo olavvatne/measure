@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useContext } from "react";
 import { MovableFluidArea } from "./MovableFluidArea.jsx";
 import { ImageMoverArea } from "./ImageMoverArea.jsx";
-import { useKeypress } from "./utils/KeypressHook.jsx";
+import { useKeypress } from "../utils/KeypressHook.jsx";
 import { useParams  } from "react-router-dom";
 import { store } from '../store.js';
 import { useHistory } from "react-router-dom";

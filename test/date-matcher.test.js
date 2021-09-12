@@ -1,5 +1,5 @@
 import { assert } from 'chai';
-import DateMatcher from "../src/components/utils/date-matcher.js";
+import DateMatcher from "../src/utils/date-matcher.js";
 
 describe("DateMatcher", () => {
     let matcher = null;

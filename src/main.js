@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, dialog, nativeTheme } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, nativeTheme, Menu } = require('electron');
 const fs = require("fs");
 const path = require('path');
 var exifr = require('exifr')
@@ -8,6 +8,7 @@ const { promisify } = require('util')
 if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
   app.quit();
 }
+
 let measureWindow = null;
 
 const createWindow = () => {
@@ -87,6 +88,38 @@ ipcMain.handle( 'app:on-fs-image-open', async (_, imgPath) => {
   var image = await readFileAsync(imgPath)
   return image;
 } );
+
+ipcMain.handle( 'app:on-fs-json-store', async (_, json) => {
+  dialog.showSaveDialog( {
+    title: "Store application data",
+    buttonLabel: "Save",
+    filters: [{name: "Json", extensions: ["json"]}]
+  }).then(file => {
+    if (!file.canceled) {
+      fs.writeFile(file.filePath.toString(), json, err => {if (err) throw err;});
+    }
+  }).catch(err => {
+    console.log(err);
+  });
+});
+
+ipcMain.handle( 'app:on-fs-json-load', async (_) => {
+  return dialog.showOpenDialog( {
+    title: "Load application data",
+    buttonLabel: "Load",
+    properties: ["openFile"],
+    filters: [{name: "Json", extensions: ["json"]}]
+  }).then(file => {
+    console.log(file);
+    if (!file.canceled) {
+      var data = fs.readFileSync(file.filePaths[0], 'utf8');
+      console.log(data);
+      return data;
+    }
+  }).catch(err => {
+    console.log(err);
+  });
+});
 
 ipcMain.handle('dark-mode:current', () => {
   return nativeTheme.shouldUseDarkColors

@@ -1,6 +1,7 @@
 import React, {createContext, useReducer} from 'react';
 
 const initialState = {
+    version: 1,
     images: {
 
     },
@@ -56,6 +57,9 @@ const StateProvider = ( { children } ) => {
       case 'ViewChangeAction':
         newState = {...state, view: action.data };
         return newState;
+      case 'HydrateAction':
+          newState = action.data;
+          return newState;
       case 'TableChangeAction':
         newState = {...state, table: {...state.table, ...action.data} };
         return newState;
