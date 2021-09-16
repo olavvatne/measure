@@ -21,12 +21,15 @@ module.exports = {
       }
     ],
   },
+  optimization: {
+    splitChunks: { chunks: "all" }
+  },
   resolve: {
     extensions: ['*', '.js', 'jsx']
   },
   output: {
     path: path.resolve(__dirname, './dist'),
-    filename: 'bundle.js',
+    filename: '[name].[chunkhash].bundle.js',
   },
   devServer: {
     static: path.resolve(__dirname, './src'),

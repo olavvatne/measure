@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import Moment from "moment";
+import * as dayjs from 'dayjs'
 
 export default function TableView({onRowClick, tableInstance}) {
 
@@ -64,7 +64,7 @@ TableView.columnConfig = [
     {
         Header: "Date", width: 180, minWidth: 180, accessor: row => {
             const d = row.date || row.fromDate;
-            const t = Moment.unix(d).format("YYYY-MM-DD HH:mm:ss");
+            const t = dayjs.unix(d).format("YYYY-MM-DD HH:mm:ss");
             return t;
         }
     },

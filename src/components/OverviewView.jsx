@@ -1,12 +1,14 @@
 import React, { useContext, useMemo, useState } from "react";
 import { useTable, useSortBy, useResizeColumns, useBlockLayout, useAbsoluteLayout, usePagination } from "react-table"
 import {SunIcon, MoonIcon, ImageIcon, UploadIcon, DownloadIcon, PaperAirplaneIcon} from '@primer/octicons-react'
-import { createGuid, createHash } from "../utils/guid.js";
+import { createHash } from "../utils/guid.js";
+import { isElectron } from "../utils/platform-util";
 import { store } from "../store.js";
-import Moment from "moment";
+import * as dayjs from 'dayjs'
 import { useHistory } from "react-router-dom";
 import "./OverviewView.css";
 import {exportToCsv, matchAndExportToCsv} from "../utils/csv-exporter";
+import {isDarkTheme, setTheme} from "../utils/dark-mode";
 import TableControls from "./TableControls.jsx";
 import TableView from "./TableView.jsx";
 import {persistState, hydrateState} from "../persist.js";
@@ -15,6 +17,7 @@ export default function OverviewView() {
     const globalState = useContext(store);
     const { dispatch, state } = globalState;
     const [isLoading, setLoading ] =  useState(false);
+    const [isDarkMode, setIsDarkMode ] =  useState(isDarkTheme());
 
     let history = useHistory();
 
@@ -30,7 +33,7 @@ export default function OverviewView() {
                 data[guid] = {
                     id: guid,
                     path: files[i].path,
-                    date: Moment(files[i].date).unix(),
+                    date: dayjs(files[i].date).unix(),
                     values: {},
                     nextId,
                     prevId
@@ -98,10 +101,21 @@ export default function OverviewView() {
         dispatch({ type: "HydrateAction", data });
     }
 
-    let isDarkMode = false;
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        isDarkMode = true;
+    async function toggleDarkMode() {
+        let isDark = false;
+        if (isElectron()) {
+            isDark = await window.darkMode.toggle();
+        }
+        else {
+            isDark = isDarkTheme();
+        }
+        setTheme(!isDark);
+        setIsDarkMode(isDark);
     }
+    // let isDarkMode = false;
+    // if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    //     isDarkMode = true;
+    // }
 
     function toggleDropdown() {
         document.getElementById("export-dropdown").classList.toggle("show");
@@ -110,14 +124,14 @@ export default function OverviewView() {
         <div>
             <div style={{padding: "5px"}}>
                 <button onClick={() => readFolder()}><ImageIcon size={16} /></button>
-                <button onClick={() => window.darkMode.toggle()}>{isDarkMode ? <MoonIcon size={16} /> : <SunIcon size={16} />}</button>
+                <button onClick={toggleDarkMode}>{isDarkMode ? <MoonIcon size={16} /> : <SunIcon size={16} />}</button>
                 <button onClick={toggleDropdown} disabled={!Object.keys(state.images).length > 0}><PaperAirplaneIcon size={16} /></button>
                 <div id="export-dropdown" className="dropdown-content">
                     <a onClick={() => exportToCsv(state.images)}>Export to csv</a>
-                    <a href="#">Match and export to csv</a>
+                    <a onClick={() => matchAndExportToCsv(state.images)}>Match and export to csv</a>
                 </div>
-                <label htmlFor="csv-timestamps">Import timestamps</label>
-                <input id="csv-timestamps" style={{display: "inline"}}type="file" name="file" onChange={e => matchAndExportToCsv(e.target.files[0], state.images)} />
+                {/* <label htmlFor="csv-timestamps">Import timestamps</label> */}
+                {/* <input id="csv-timestamps" style={{display: "inline"}}type="file" name="file" onChange={e => matchAndExportToCsv(e.target.files[0], state.images)} /> */}
                 <button onClick={() => window.fileApi.storeJson(persistState(state))}><DownloadIcon size={16} /></button>
                 <button onClick={onLoadAppData}><UploadIcon size={16} /></button>
                 {/* <button className={buttonStyle} onClick={() => exportWithTimestampsToCsv()} disabled={!Object.keys(state.images).length > 0}>Matcht timestamps to CSV</button> */}

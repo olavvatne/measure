@@ -1,4 +1,4 @@
-import Moment from "moment";
+import * as dayjs from 'dayjs'
 
 export default class DateMatcher {
     constructor(maxDiff) {
@@ -36,14 +36,14 @@ export default class DateMatcher {
                     break;
                 }
                 // If they do not match exactly we make a connection with comment
-                const diffInSeconds = Moment.unix(rowDate).diff(Moment.unix(imageDate), "seconds");
+                const diffInSeconds = dayjs.unix(rowDate).diff(dayjs.unix(imageDate), "seconds");
                 if (diffInSeconds < this.maxDiffSeconds && diffInSeconds > 0) {
 
                     // Check if next image is closer
                     let nextImageDiff = Number.MAX_SAFE_INTEGER;
                     if (j + 1 < images_unix.length) {
                         const nextImage = images_unix[j + 1];
-                        nextImageDiff = Moment.unix(rowDate).diff(Moment.unix(nextImage), "seconds");
+                        nextImageDiff = dayjs.unix(rowDate).diff(dayjs.unix(nextImage), "seconds");
                     }
                     if (Math.abs(nextImageDiff) < Math.abs(diffInSeconds)) {
                         // Next image is a better match
@@ -53,7 +53,7 @@ export default class DateMatcher {
                     let prevDiff = Number.MAX_SAFE_INTEGER;
                     if (prevTimestamp.index && !prevTimestamp.hadMatch) {
                         const prevRow = timestamps_unix[prevTimestamp.index];
-                        prevDiff = Moment.unix(prevRow).diff(Moment.unix(imageDate), "seconds");
+                        prevDiff = dayjs.unix(prevRow).diff(dayjs.unix(imageDate), "seconds");
                     }
                     if (Math.abs(prevDiff) < Math.abs(diffInSeconds)) {
                         matches.push({from: prevTimestamp.index, to: j, comment: "within 5 minutes"});

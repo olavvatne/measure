@@ -7,6 +7,7 @@
   "scripts": {
     "start": "electron-forge start",
     "start-web": "webpack serve --config ./webpack.web.config.js --mode development",
+    "build-web": "webpack --config ./webpack.web.config.js --mode production",
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
@@ -91,9 +92,9 @@
   },
   "dependencies": {
     "@primer/octicons-react": "^15.1.0",
+    "dayjs": "^1.10.7",
     "electron-squirrel-startup": "^1.0.0",
     "exifr": "^7.1.2",
-    "moment": "^2.29.1",
     "moveable-helper": "^0.4.0",
     "prop-types": "^15.7.2",
     "react": "^17.0.2",

@@ -1,4 +1,4 @@
-import Moment from "moment";
+import * as dayjs from 'dayjs'
 import Papa from "papaparse";
 import { createGuid } from "./guid.js";
 import DateMatcher from "./date-matcher.js";
@@ -6,7 +6,7 @@ import DateMatcher from "./date-matcher.js";
 export function exportToCsv(rows) {
 
     const data = Object.values(rows).sort((a, b) => a.date < b.date).map(row => {
-        var m = Moment.unix(row.date);
+        var m = dayjs.unix(row.date);
         return {
             "date": m.format("MM/DD/YY"),
             "time": m.format("HH:mm:ss"),
@@ -21,7 +21,21 @@ export function exportToCsv(rows) {
     exportFile(csv)
 }
 
-export function matchAndExportToCsv(file, rows) {
+export async function matchAndExportToCsv(rows) {
+    const [fileHandle] = await window.showOpenFilePicker({
+        types: [
+            {
+                description: 'csv',
+                accept: {
+                    'csv/*': ['.csv']
+                }
+            },
+        ],
+        excludeAcceptAllOption: true,
+        multiple: false
+    });
+    const file = await fileHandle.getFile();
+
     const data = Object.values(rows).filter(img =>{ return Object.keys(img.values).length > 0}).sort((a, b) => a.date < b.date)
     const matcher = new DateMatcher();
     Papa.parse(file, {
@@ -29,7 +43,7 @@ export function matchAndExportToCsv(file, rows) {
             if (results.data.length > 0) {
                 const timestamps = results.data.map(r => {
                     if (r.length == 2) {
-                        return Moment(r[0] + " " + r[1], 'MM/DD/YY HH:mm:ss').unix()
+                        return dayjs(r[0] + " " + r[1], 'MM/DD/YY HH:mm:ss').unix()
                     }
                     return null;
                 });
@@ -54,15 +68,6 @@ export function matchAndExportToCsv(file, rows) {
                 exportFile(csv)
             }
         },
-        // transform: function(value, index) {
-        //     if (index === dateCol) {
-        //         return Moment(value, 'YYYY/MM/DD')
-        //     }
-        //     else if (index === timeCol) {
-        //         return Moment(value, 'HH:mm:ss')
-        //     }
-        //     return ""
-        // }
     })
 }
 
