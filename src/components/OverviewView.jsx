@@ -23,7 +23,7 @@ export default function OverviewView() {
 
     async function readFolder() {
         setLoading(true);
-        window.fileApi.openDialog().then(async files => {
+        window.imageApi.openDialog().then(async files => {
             var data = {};
             console.log(files);
             for (let i = 0; i < files.length; i++) {
@@ -112,10 +112,6 @@ export default function OverviewView() {
         setTheme(!isDark);
         setIsDarkMode(isDark);
     }
-    // let isDarkMode = false;
-    // if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    //     isDarkMode = true;
-    // }
 
     function toggleDropdown() {
         document.getElementById("export-dropdown").classList.toggle("show");
@@ -130,11 +126,8 @@ export default function OverviewView() {
                     <a onClick={() => exportToCsv(state.images)}>Export to csv</a>
                     <a onClick={() => matchAndExportToCsv(state.images)}>Match and export to csv</a>
                 </div>
-                {/* <label htmlFor="csv-timestamps">Import timestamps</label> */}
-                {/* <input id="csv-timestamps" style={{display: "inline"}}type="file" name="file" onChange={e => matchAndExportToCsv(e.target.files[0], state.images)} /> */}
                 <button onClick={() => window.fileApi.storeJson(persistState(state))}><DownloadIcon size={16} /></button>
                 <button onClick={onLoadAppData}><UploadIcon size={16} /></button>
-                {/* <button className={buttonStyle} onClick={() => exportWithTimestampsToCsv()} disabled={!Object.keys(state.images).length > 0}>Matcht timestamps to CSV</button> */}
             </div>
             { isLoading ? <div className="center-spinner loader"></div> : null }
             { data.length > 0 ? 

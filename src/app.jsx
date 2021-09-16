@@ -5,6 +5,7 @@ import OverviewView from "./components/OverviewView.jsx";
 import { StateProvider } from './store.js';
 import { HashRouter as Router, Route, } from "react-router-dom";
 import ImageAccessApi from "./utils/image-access";
+import JsonAccessApi from "./utils/json-access";
 import {isElectron} from "./utils/platform-util";
 import {detectColorScheme} from "./utils/dark-mode";
 
@@ -12,8 +13,8 @@ import {detectColorScheme} from "./utils/dark-mode";
 function App() {
     console.log(isElectron());
     if (!isElectron()) {
-        const api = new ImageAccessApi();
-        window.fileApi = api;
+        window.imageApi = new ImageAccessApi();
+        window.fileApi = new JsonAccessApi();
     }
 
     return (

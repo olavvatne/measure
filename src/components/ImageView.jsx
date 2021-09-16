@@ -19,11 +19,11 @@ export default function ImageView() {
 
 
     useEffect(() => {
-        if (!window.fileApi.getImage) return;
+        if (!window.imageApi.getImage) return;
 
         const dateUnix = image.date;
         dispatch({ type: "SetCurrentMeasurerAction", data: {dateUnix} });
-        window.fileApi.getImage(image.path).then(content => {
+        window.imageApi.getImage(image.path).then(content => {
             const url = URL.createObjectURL( new Blob([content.buffer], { type: "image/png" }) );
             const img = document.getElementById("image-container");
             const rotate = true;
