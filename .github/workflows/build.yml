@@ -49,16 +49,10 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/v')
     steps:
       - uses: actions/checkout@v2
-      - name: Replace version with tag
-        run: |
-          # from refs/tags/vX.Y.Z get X.Y.Z
-          VERSION=$(echo $GITHUB_REF | sed 's#.*/v##')
-          PLACEHOLDER='"version": "0.0.0"'
-          VERSION_FILE='package.json'
-          # Grep to ensure the placeholder is there, cancel build if not
-          grep "$PLACEHOLDER" "$VERSION_FILE"
-          sed -i "s/$PLACEHOLDER/\"version\": \"${VERSION}\"/g" "$VERSION_FILE"
-        shell: bash
+      - name: Match tag to package version
+        uses: geritol/match-tag-to-package-version@0.2.0
+        with:
+          TAG_PREFIX: v
       - uses: actions/setup-node@v1
         with:
           node-version: 14
@@ -75,16 +69,10 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/v')
     steps:
     - uses: actions/checkout@v2
-    - name: Replace version with tag
-      run: |
-        # from refs/tags/vX.Y.Z get X.Y.Z
-        VERSION=$(echo $GITHUB_REF | sed 's#.*/v##')
-        PLACEHOLDER='"version": "0.0.0"'
-        VERSION_FILE='package.json'
-        # Grep to ensure the placeholder is there, cancel build if not
-        grep "$PLACEHOLDER" "$VERSION_FILE"
-        sed -i "s/$PLACEHOLDER/\"version\": \"${VERSION}\"/g" "$VERSION_FILE"
-      shell: bash
+    - name: Match tag to package version
+      uses: geritol/match-tag-to-package-version@0.2.0
+      with:
+        TAG_PREFIX: v
     - uses: actions/setup-node@v1
       with:
         node-version: 14

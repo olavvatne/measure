@@ -1,8 +1,8 @@
 {
   "name": "measure",
   "productName": "measure",
-  "version": "0.0.0",
-  "description": "My Electron application description",
+  "version": "0.1.2",
+  "description": "Measure values from images",
   "main": ".webpack/main",
   "scripts": {
     "start": "electron-forge start",
@@ -28,8 +28,8 @@
           "name": "@electron-forge/publisher-github",
           "config": {
             "repository": {
-              "owner": "erikhofer",
-              "name": "electron-publish-example"
+              "owner": "olavvatne",
+              "name": "measure"
             }
           }
         }
