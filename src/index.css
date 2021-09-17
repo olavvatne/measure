@@ -1,3 +1,5 @@
+@import '~water.css/out/water.min.css';
+
 :root {
   --transparent-contrast: rgba(0, 0, 0, 0.2);
   --measure-row-background: #db5959;
