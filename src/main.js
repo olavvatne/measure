@@ -69,11 +69,22 @@ ipcMain.handle( 'app:on-fs-dialog-open', async () => {
         path.extname(el).toLowerCase() === '.png'});
         imgFiles = imgFiles.map(f => path.join(dir, f));
         for (let j = 0; j < imgFiles.length; j ++) {
-          const { DateTimeOriginal } = await exifr.parse(imgFiles[j], ["DateTimeOriginal"]);
-          // const thumbnail = await exifr.thumbnail(imgFiles[j])
+          console.log(imgFiles[j])
+
+          let date = null;
+          const exiRes = await exifr.parse(imgFiles[j], ["DateTimeOriginal"]);
+          if (exiRes) {
+            const { DateTimeOriginal } = exiRes
+            date = DateTimeOriginal;
+          }
+          else {
+            const imgStats = fs.statSync(imgFiles[j]);
+            date = imgStats.birthtime;
+          }
+
           files.push({
             path: imgFiles[j],
-            date: DateTimeOriginal,
+            date: date,
             // thumbnail: thumbnail,
           });
         }
