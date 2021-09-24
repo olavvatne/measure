@@ -7,6 +7,12 @@ import { useParams  } from "react-router-dom";
 import { store } from '../store.js';
 import { useHistory } from "react-router-dom";
 
+const nextTooltip = "Go to the next image";
+const previousTooltip = "Go to the previous image";
+const viewTooltip = "Image can be zoomed and moved if toggled on to green. "
+    + "If toggled off you can modify the measuring widgets";
+const menuTooltip = "Go back to overview";
+
 export default function ImageView() {
     let { guid } = useParams();
     const globalState = useContext(store);
@@ -96,20 +102,28 @@ export default function ImageView() {
     return (
         <div className="image-container">
             <div className="top-bar">
-                <button className={buttonStyle} onClick={overview}>
+                <button title={menuTooltip} className={buttonStyle} onClick={overview}>
                     <RowsIcon size={16} />
                 </button>
-                <button className={"" + " " + checkStyle}
+                <button title={viewTooltip} className={"" + " " + checkStyle}
                         onClick={e => setImageMode(!imageMode)}>
                     <SearchIcon size={16} />
                 </button>
                 <div className="controls">
-                    {image.prevId ? <button className={"controls-prev " + buttonStyle} onClick={prev}>
-                        <ArrowLeftIcon size={16} />
-                    </button> : null }
-                    {image.nextId ? <button className={"controls-next " + buttonStyle} onClick={next}>
-                        <ArrowRightIcon size={16} />
-                    </button> : null }
+                    {image.prevId ? 
+                        <button title={previousTooltip}  
+                                className={"controls-prev " + buttonStyle} 
+                                onClick={prev}>
+                            <ArrowLeftIcon size={16} />
+                        </button> 
+                    : null }
+                    {image.nextId ? 
+                        <button title={nextTooltip} 
+                                className={"controls-next " + buttonStyle} 
+                                onClick={next}>
+                            <ArrowRightIcon size={16} />
+                        </button> 
+                    : null }
                 </div>
             </div>
             <ImageMoverArea imageMode={imageMode}>

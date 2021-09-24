@@ -16,6 +16,7 @@ const createWindow = () => {
   const mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
+    title: "Measure",
     webPreferences: {
       contextIsolation: true,
       nodeIntegration: false,
@@ -27,7 +28,9 @@ const createWindow = () => {
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  if (process.env.NODE_ENV === "development") {
+    mainWindow.webContents.openDevTools();
+  }
   measureWindow = mainWindow;
 };
 
