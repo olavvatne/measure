@@ -6,6 +6,7 @@ import { useKeypress } from "../utils/KeypressHook.jsx";
 import { useParams  } from "react-router-dom";
 import { store } from '../store.js';
 import { useHistory } from "react-router-dom";
+import * as dayjs from 'dayjs'
 
 const nextTooltip = "Go to the next image";
 const previousTooltip = "Go to the previous image";
@@ -125,6 +126,7 @@ export default function ImageView() {
                         </button> 
                     : null }
                 </div>
+                <div className="date-area">{dayjs.unix(image.date).format("YYYY-MM-DD HH:mm:ss")}</div>
             </div>
             <ImageMoverArea imageMode={imageMode}>
                 <MovableFluidArea 

@@ -34,3 +34,7 @@
 .measure-row {
     background-color: var(--measure-row-background) !important;
 }
+
+.moveable-edge-clickable {
+    cursor: default;
+}
