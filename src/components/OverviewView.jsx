@@ -13,6 +13,13 @@ import TableControls from "./TableControls.jsx";
 import TableView from "./TableView.jsx";
 import {persistState, hydrateState} from "../persist.js";
 
+const imageTooltip = "Open folder containing images";
+const exportTooltip = "Export data options";
+const saveTooltip = "Save current project to file";
+const loadTooltip = "Load exisiting project";
+const darkModeTooltip = "Toggle between dark and light theme";
+
+
 export default function OverviewView() {
     const globalState = useContext(store);
     const { dispatch, state } = globalState;
@@ -119,15 +126,15 @@ export default function OverviewView() {
     return (
         <div>
             <div style={{padding: "5px"}}>
-                <button onClick={() => readFolder()}><ImageIcon size={16} /></button>
-                <button onClick={toggleDarkMode}>{isDarkMode ? <MoonIcon size={16} /> : <SunIcon size={16} />}</button>
-                <button onClick={toggleDropdown} disabled={!Object.keys(state.images).length > 0}><PaperAirplaneIcon size={16} /></button>
+                <button title={imageTooltip} onClick={() => readFolder()}><ImageIcon size={16} /></button>
+                <button title={darkModeTooltip} onClick={toggleDarkMode}>{isDarkMode ? <MoonIcon size={16} /> : <SunIcon size={16} />}</button>
+                <button title={exportTooltip} onClick={toggleDropdown} disabled={!Object.keys(state.images).length > 0}><PaperAirplaneIcon size={16} /></button>
                 <div id="export-dropdown" className="dropdown-content">
                     <a onClick={() => exportToCsv(state.images)}>Export to csv</a>
                     <a onClick={() => matchAndExportToCsv(state.images)}>Match and export to csv</a>
                 </div>
-                <button onClick={() => window.fileApi.storeJson(persistState(state))}><DownloadIcon size={16} /></button>
-                <button onClick={onLoadAppData}><UploadIcon size={16} /></button>
+                <button title={saveTooltip} onClick={() => window.fileApi.storeJson(persistState(state))}><DownloadIcon size={16} /></button>
+                <button title={loadTooltip} onClick={onLoadAppData}><UploadIcon size={16} /></button>
             </div>
             { isLoading ? <div className="center-spinner loader"></div> : null }
             { data.length > 0 ? 
