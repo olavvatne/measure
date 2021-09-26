@@ -37,9 +37,11 @@ const LabelLeftViewable = {
     props: {color: String, displayName: String, valueLeft: Number},
     events: {},
     render(moveable, React) {
-        // function onChange(e) {
-        //     moveable.props.onValueLeft
-        // }
+        function onKeyDown(e) {
+            if(e.key === 'Enter'){
+                moveable.props.onValueLeft(e)
+            }
+        }
         const rect = moveable.getRect();
         const { pos2 } = moveable.state;
         const transform = `translate(${pos2[0]}px, ${pos2[1]}px) rotate(${rect.rotation}deg)  translate(${-rect.offsetWidth- 30}px, -50px)`
@@ -63,8 +65,8 @@ const LabelLeftViewable = {
             <label style={{display: "block"}}>Start {moveable.props.displayName}</label>
             <input key={moveable.props.valueLeft} className="moveable-input" 
                 type='tel' pattern="^-?[0-9]\d*\.?\d*$"
-                style={{display: "block", margin: "auto", width: "30px", background: "transparent", color: "white"}} 
-                defaultValue={moveable.props.valueLeft} onBlur={moveable.props.onValueLeft}/>
+                style={{display: "block", margin: "auto", width: "30px", background: "transparent", color: "white"}}
+                defaultValue={moveable.props.valueLeft} onBlur={moveable.props.onValueLeft} onKeyDown={onKeyDown}/>
         </div>
     }
 };
@@ -79,6 +81,12 @@ const LabelRightViewable = {
         const rect = moveable.getRect();
         const { pos2 } = moveable.state;
         const transform = `translate(${pos2[0]}px, ${pos2[1]}px) rotate(${rect.rotation}deg)  translate(-30px, -50px)`
+
+        function onKeyDown(e) {
+            if(e.key === 'Enter'){
+                moveable.props.onValueRight(e)
+            }
+        }
         return <div key={"label-right-viewer"} 
             className={"moveable-label-right"} 
             style={{
@@ -100,7 +108,7 @@ const LabelRightViewable = {
             <input key={moveable.props.valueRight} className="moveable-input" 
                 type='tel' pattern="^-?[0-9]\d*\.?\d*$"
                 style={{display: "block", margin: "auto", width: "30px", background: "transparent", color: "white"}} 
-                defaultValue={moveable.props.valueRight} onBlur={moveable.props.onValueRight}/>
+                defaultValue={moveable.props.valueRight} onBlur={moveable.props.onValueRight} onKeyDown={onKeyDown}/>
         </div>
     }
 };
@@ -240,11 +248,13 @@ export function MovableFluidArea({imageId, name, color, displayName, disabled, m
                 color: color,
                 onValueRight: (e) => {
                     if (e.target.validity.valid) {
+                        console.log(parseFloat(e.target.value))
                         setMeasureValues({...measureValues, maxValue: parseFloat(e.target.value)});
                     }
                 },
                 onValueLeft: (e) => {
                     if (e.target.validity.valid) {
+                        console.log(parseFloat(e.target.value))
                         setMeasureValues({...measureValues, minValue: parseFloat(e.target.value)});
                     }
                 },
