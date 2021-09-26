@@ -26,6 +26,9 @@ export default function OverviewView() {
     const [isLoading, setLoading ] =  useState(false);
     const [isDarkMode, setIsDarkMode ] =  useState(isDarkTheme());
 
+    // Only edge and chrome support the file access api
+    const isFileAccessSupport = !!window.showSaveFilePicker || isElectron();
+
     let history = useHistory();
 
     async function readFolder() {
@@ -135,6 +138,7 @@ export default function OverviewView() {
                 </div>
                 <button title={saveTooltip} onClick={() => window.fileApi.storeJson(persistState(state))}><DownloadIcon size={16} /></button>
                 <button title={loadTooltip} onClick={onLoadAppData}><UploadIcon size={16} /></button>
+                {isFileAccessSupport ? null : <span style={{color: "red"}}>Measure only works in Chrome or Edge</span>}
             </div>
             { isLoading ? <div className="center-spinner loader"></div> : null }
             { data.length > 0 ? 
