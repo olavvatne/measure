@@ -3,7 +3,7 @@ import * as ReactDOM from "react-dom";
 import ImageView from "./components/ImageView.jsx";
 import OverviewView from "./components/OverviewView.jsx";
 import { StateProvider } from './store.js';
-import { HashRouter as Router, Route, } from "react-router-dom";
+import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import ImageAccessApi from "./utils/image-access";
 import JsonAccessApi from "./utils/json-access";
 import {isElectron} from "./utils/platform-util";
@@ -20,14 +20,10 @@ function App() {
     return (
         <StateProvider>
             <Router>
-                <div>
-                <Route exact={true} path="/">
-                    <OverviewView/>
-                </Route>
-                <Route path="/image/:guid">
-                    <ImageView />
-                </Route>
-                </div>
+                <Routes>
+                    <Route  exact={true} path="/"  element={<OverviewView/>} />
+                    <Route  path="/image/:guid" element={<ImageView />} />
+                </Routes>
             </Router>
         </StateProvider>
     );

@@ -5,7 +5,7 @@ import { ImageMoverArea } from "./ImageMoverArea.jsx";
 import { useKeypress } from "../utils/KeypressHook.jsx";
 import { useParams  } from "react-router-dom";
 import { store } from '../store.js';
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import * as dayjs from 'dayjs'
 
 const nextTooltip = "Go to the next image";
@@ -18,10 +18,10 @@ export default function ImageView() {
     let { guid } = useParams();
     const globalState = useContext(store);
     const { dispatch, state } = globalState;
-    let history = useHistory();
+    let navigate = useNavigate();
     const image = state.images[guid] || {};
     const [imageMode, setImageMode] = useState(false);
-    const [fluidValues, setFluidValues] = useState({og: image.values.og, ow: image.values.ow});
+    const [fluidValues, setFluidValues] = useState({og: image.values?.og, ow: image.values?.ow});
     const [measure, setMeasure] = useState({og: state?.currentMeasurer.og, ow: state?.currentMeasurer.ow});
 
 
@@ -53,7 +53,7 @@ export default function ImageView() {
     }, [image.id, JSON.stringify(state.currentMeasurer)])
 
     useEffect(() => {
-        setFluidValues({og: image.values.og, ow: image.values.ow});
+        setFluidValues({og: image.values?.og, ow: image.values?.ow});
     }, [image.id, JSON.stringify(state.images[guid])])
 
     useKeypress("q", () => {
@@ -68,7 +68,7 @@ export default function ImageView() {
         prev();
     }, [image.id, image, measure, fluidValues]);
 
-    function navigate(navUrl) {
+    function navigateTo(navUrl) {
         const mv = measure;
         const fv = fluidValues;
         const ci = image;
@@ -80,23 +80,23 @@ export default function ImageView() {
             dispatch({ type: "NewMeasureValuesAction", data});
         }
 
-        history.push(navUrl);
+        navigate(navUrl);
     }
 
     function next() {
         if (image.nextId) {
-            navigate("/image/" + image.nextId);
+            navigateTo("/image/" + image.nextId);
         }
     }
 
     function prev() {
         if (image.prevId) {
-            navigate("/image/" + image.prevId);
+            navigateTo("/image/" + image.prevId);
         }
     }
 
     function overview() {
-        navigate("/");
+        navigateTo("/");
     }
     const checkStyle = imageMode ? "primary-button" : "secondary-button";
     const buttonStyle = ""
