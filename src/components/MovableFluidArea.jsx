@@ -37,9 +37,6 @@ const LabelLeftViewable = {
     props: {color: String, displayName: String, valueLeft: Number},
     events: {},
     render(moveable, React) {
-        // function onChange(e) {
-        //     moveable.props.onValueLeft
-        // }
         const rect = moveable.getRect();
         const { pos2 } = moveable.state;
         const transform = `translate(${pos2[0]}px, ${pos2[1]}px) rotate(${rect.rotation}deg)  translate(${-rect.offsetWidth- 30}px, -50px)`
@@ -64,7 +61,7 @@ const LabelLeftViewable = {
             <input key={moveable.props.valueLeft} className="moveable-input" 
                 type='tel' pattern="^-?[0-9]\d*\.?\d*$"
                 style={{display: "block", margin: "auto", width: "30px", background: "transparent", color: "white"}} 
-                defaultValue={moveable.props.valueLeft} onBlur={moveable.props.onValueLeft}/>
+                defaultValue={moveable.props.valueLeft} onBlur={(e) => {moveable.props.onValueLeft(e)}}/>
         </div>
     }
 };
@@ -79,6 +76,7 @@ const LabelRightViewable = {
         const rect = moveable.getRect();
         const { pos2 } = moveable.state;
         const transform = `translate(${pos2[0]}px, ${pos2[1]}px) rotate(${rect.rotation}deg)  translate(-30px, -50px)`
+
         return <div key={"label-right-viewer"} 
             className={"moveable-label-right"} 
             style={{
@@ -100,7 +98,7 @@ const LabelRightViewable = {
             <input key={moveable.props.valueRight} className="moveable-input" 
                 type='tel' pattern="^-?[0-9]\d*\.?\d*$"
                 style={{display: "block", margin: "auto", width: "30px", background: "transparent", color: "white"}} 
-                defaultValue={moveable.props.valueRight} onBlur={moveable.props.onValueRight}/>
+                defaultValue={moveable.props.valueRight} onBlur={(e) => {moveable.props.onValueRight(e)}}/>
         </div>
     }
 };
@@ -126,22 +124,17 @@ function valueToPos(value, padding, width, valueLeft, valueRight) {
 
 const EdgeClickable = {
     name: "EdgeClickable",
-    props: {color: String, onEdge: Function, name: String, fluidEdge: Number, valueLeft: Number, valueRight: Number},
+    props: {color: String, name: String, fluidEdge: Number, valueLeft: Number, valueRight: Number},
     events: {},
     render(moveable, React) {
         const rect = moveable.getRect();
         const { pos2 } = moveable.state;
-        function onFluidEdge(e) {
-            const padding = Math.max(30, rect.offsetWidth * 0.05);
-            const value = posToValue( e.nativeEvent.offsetX, padding, rect.offsetWidth, moveable.props.valueLeft, moveable.props.valueRight);
-            moveable.props.onEdge({value, name: moveable.props.name})
-        }
+
         const padding = Math.max(30, rect.offsetWidth * 0.05);
         const pos = valueToPos(moveable.props.fluidEdge, padding, rect.offsetWidth, moveable.props.valueLeft, moveable.props.valueRight);
         const edgeValue = moveable.props.fluidEdge;
-
         const transform = `translate(${pos2[0]}px, ${pos2[1]}px) rotate(${rect.rotation}deg)  translate(${-rect.offsetWidth}px, 00px)`
-        return <div key={"edge-clickable-viewer"} onClick={onFluidEdge} 
+        return <div key={"edge-clickable-viewer"} 
             className={"moveable-edge-clickable"} 
             style={{
                 position: "absolute",
@@ -218,6 +211,14 @@ export function MovableFluidArea({imageId, name, color, displayName, disabled, m
     }
     const s = measureValues;
     const transform = `rotate(${s.rotation || 0}deg)`;
+
+    function onFluidEdge(e) {
+        const rect = e.moveable.getRect();
+        const padding = Math.max(30, rect.offsetWidth * 0.05);
+        const value = posToValue( e.inputEvent.offsetX, padding, rect.offsetWidth, measureValues.minValue, measureValues.maxValue);
+        setValue(value)
+    }
+
     return <div className="fluid-area">
         <div className="target" ref={targetRef} style={{transform: transform, top: measureValues.y, left: measureValues.x, width: s.offsetWidth+"px", height: s.offsetHeight+"px"}}>
         </div>
@@ -225,6 +226,10 @@ export function MovableFluidArea({imageId, name, color, displayName, disabled, m
             className={name + " " + color}
             key={imageId + name}
             ref={moveableRef}
+            onClick={e => {
+                console.log(e);
+               onFluidEdge(e)
+            }}
             target={targetRef}
             ables={[DimensionViewable, LabelLeftViewable, LabelRightViewable, EdgeClickable]}
             props={{
@@ -247,10 +252,7 @@ export function MovableFluidArea({imageId, name, color, displayName, disabled, m
                     if (e.target.validity.valid) {
                         setMeasureValues({...measureValues, minValue: parseFloat(e.target.value)});
                     }
-                },
-                onEdge: (e) => {
-                    setValue(e.value);
-                },
+                }
             }}
             renderDirections={["n", "s", "w", "e"]}
             origin={false}
@@ -285,7 +287,7 @@ export function MovableFluidArea({imageId, name, color, displayName, disabled, m
                     setMeasureValues({...measureValues, rotation: e.lastEvent.rotate});
                 }
                 else if (Math.abs(measureValues.rotation - e.lastEvent.rotate) > 0.001) {
-                    setMeasureValues({...wmeasureValues, rotation: e.lastEvent.rotate});
+                    setMeasureValues({...measureValues, rotation: e.lastEvent.rotate});
                 }
                 }}
             />

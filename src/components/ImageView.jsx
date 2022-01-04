@@ -21,7 +21,7 @@ export default function ImageView() {
     let history = useHistory();
     const image = state.images[guid] || {};
     const [imageMode, setImageMode] = useState(false);
-    const [fluidValues, setFluidValues] = useState({og: image.values.og, ow: image.values.ow});
+    const [fluidValues, setFluidValues] = useState({og: image.values?.og, ow: image.values?.ow});
     const [measure, setMeasure] = useState({og: state?.currentMeasurer.og, ow: state?.currentMeasurer.ow});
 
 
@@ -53,7 +53,7 @@ export default function ImageView() {
     }, [image.id, JSON.stringify(state.currentMeasurer)])
 
     useEffect(() => {
-        setFluidValues({og: image.values.og, ow: image.values.ow});
+        setFluidValues({og: image.values?.og, ow: image.values?.ow});
     }, [image.id, JSON.stringify(state.images[guid])])
 
     useKeypress("q", () => {
