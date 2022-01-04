@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, dialog, nativeTheme, Menu } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, nativeTheme, Menu, protocol } = require('electron');
 const fs = require("fs");
 const path = require('path');
 var exifr = require('exifr')
@@ -148,3 +148,11 @@ ipcMain.handle('dark-mode:toggle', () => {
   measureWindow.webContents.send('dark-mode-updated', nativeTheme.shouldUseDarkColors);
   return nativeTheme.shouldUseDarkColors
 })
+
+if (process.env.NODE_ENV === "development") {
+  protocol.registerSchemesAsPrivileged([
+    { scheme: 'http', privileges: { standard: true, bypassCSP: true, allowServiceWorkers: true, supportFetchAPI: true, corsEnabled: true, stream: true } },
+    { scheme: 'https', privileges: { standard: true, bypassCSP: true, allowServiceWorkers: true, supportFetchAPI: true, corsEnabled: true, stream: true } },
+    { scheme: 'mailto', privileges: { standard: true } },
+  ]);
+}

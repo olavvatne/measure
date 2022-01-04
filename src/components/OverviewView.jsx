@@ -5,7 +5,7 @@ import { createHash } from "../utils/guid.js";
 import { isElectron } from "../utils/platform-util";
 import { store } from "../store.js";
 import * as dayjs from 'dayjs'
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import "./OverviewView.css";
 import {exportToCsv, matchAndExportToCsv} from "../utils/csv-exporter";
 import {isDarkTheme, setTheme} from "../utils/dark-mode";
@@ -29,7 +29,7 @@ export default function OverviewView() {
     // Only edge and chrome support the file access api
     const isFileAccessSupport = !!window.showSaveFilePicker || isElectron();
 
-    let history = useHistory();
+    let navigate = useNavigate();
 
     async function readFolder() {
         setLoading(true);
@@ -102,7 +102,7 @@ export default function OverviewView() {
         if (!row.values.path) {
             return;
         }
-        history.push("/image/" + row.values.id);
+        navigate("/image/" + row.values.id);
     }
 
     async function onLoadAppData() {
