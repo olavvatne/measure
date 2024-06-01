@@ -1,5 +1,5 @@
 import React from "react";
-import * as ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import ImageView from "./components/ImageView.jsx";
 import OverviewView from "./components/OverviewView.jsx";
 import { StateProvider } from './store.js';
@@ -30,11 +30,7 @@ function App() {
 }
 
 
-
-
-function render() {
-  ReactDOM.render(<App />, document.getElementById("app-container"));
-}
-
 detectColorScheme();
-render();
+const container = document.getElementById("app-container");
+const root = createRoot(container);
+root.render(<App />);
