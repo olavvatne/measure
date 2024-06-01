@@ -173,7 +173,7 @@ const EdgeClickable = {
     }
 };
 
-export function MovableFluidArea({imageId, name, color, displayName, disabled, measureValues, value, setValue, setMeasureValues}) {
+export function MovableFluidArea({imageId = "", name = "og", color = "red", displayName = "O/G", disabled=false, measureValues={minValue: 5, minValue: 10, rotation: 0, x: 20, y: 20, offsetWidth: 200, offsetHeight: 200}, value=null, setValue= () => {}, setMeasureValues = () => {}}) {
     
     const [helper] = React.useState(() => {
         return new MoveableHelper();
@@ -305,15 +305,3 @@ MovableFluidArea.propTypes = {
     setValue: PropTypes.func,
     setMeasureValues: PropTypes.func,
 };
-
-MovableFluidArea.defaultProps = {
-    imageId: "",
-    name: "og",
-    color: "red",
-    displayName: "O/G",
-    measureValues: {minValue: 5, minValue: 10, rotation: 0, x: 20, y: 20, offsetWidth: 200, offsetHeight: 200},
-    disabled: false,
-    value: null,
-    setValue: () => {},
-    setMeasureValues: () => {}
-  };
