@@ -5,57 +5,39 @@ on:
     branches:
       - main
     tags:
-      - 'v*'
+      - "v*"
   pull_request:
-    branches: [ main ]
+    branches: [main]
 jobs:
   run-tests:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [16.x]
     steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: "20.x"
+          cache: "npm"
       - run: npm ci
       - run: npm test
 
-  build-to-gh-pages:
-    runs-on: ubuntu-latest
-    needs: run-tests
-    if: startsWith(github.ref, 'refs/tags/v')
-    steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js
-        uses: actions/setup-node@v1
-        with:
-          node-version: 16.x
-      - name: Install dependencies
-        run: npm ci
-      - name: Build web page
-        run: npm run build-web
-      - name: Deploy to gh-pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
-  
   build-app-windows:
     runs-on: windows-latest
     needs: run-tests
     if: startsWith(github.ref, 'refs/tags/v')
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Match tag to package version
         uses: geritol/match-tag-to-package-version@0.2.0
         with:
           TAG_PREFIX: v
-      - uses: actions/setup-node@v1
+      - name: Use Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: 16
+          node-version: "20.x"
+          cache: "npm"
       - name: install dependencies
         run: npm ci
       - name: publish
@@ -68,17 +50,20 @@ jobs:
     needs: run-tests
     if: startsWith(github.ref, 'refs/tags/v')
     steps:
-    - uses: actions/checkout@v2
-    - name: Match tag to package version
-      uses: geritol/match-tag-to-package-version@0.2.0
-      with:
-        TAG_PREFIX: v
-    - uses: actions/setup-node@v1
-      with:
-        node-version: 16
-    - name: install dependencies
-      run: npm ci
-    - name: publish
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: npm run publish
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Match tag to package version
+        uses: geritol/match-tag-to-package-version@0.2.0
+        with:
+          TAG_PREFIX: v
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+          cache: "npm"
+      - name: install dependencies
+        run: npm ci
+      - name: publish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npm run publish
