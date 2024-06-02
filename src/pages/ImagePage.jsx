@@ -1,12 +1,11 @@
-import React, {useState, useEffect, useContext } from "react";
-import {ArrowLeftIcon, ArrowRightIcon, SearchIcon, RowsIcon, LockIcon} from '@primer/octicons-react'
-import { MovableFluidArea } from "../components/MovableFluidArea.jsx";
+import { ArrowLeftIcon, ArrowRightIcon, LockIcon, RowsIcon, SearchIcon } from '@primer/octicons-react';
+import * as dayjs from 'dayjs';
+import React, { useContext, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { ImageMoverArea } from "../components/ImageMoverArea.jsx";
-import { useKeypress } from "../utils/KeypressHook.jsx";
-import { useParams  } from "react-router-dom";
+import { MovableFluidArea } from "../components/MovableFluidArea.jsx";
 import { store } from '../store.js';
-import { useNavigate } from "react-router-dom";
-import * as dayjs from 'dayjs'
+import { useKeypress } from "../utils/KeypressHook.jsx";
 
 const nextTooltip = "Go to the next image";
 const previousTooltip = "Go to the previous image";

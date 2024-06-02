@@ -1,4 +1,4 @@
-import React, {useState, useRef, useContext, useEffect} from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { store } from '../store.js';
 
 export function ImageMoverArea({imageMode, children}) {
