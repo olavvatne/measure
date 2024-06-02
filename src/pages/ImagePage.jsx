@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useContext } from "react";
 import {ArrowLeftIcon, ArrowRightIcon, SearchIcon, RowsIcon, LockIcon} from '@primer/octicons-react'
-import { MovableFluidArea } from "./MovableFluidArea.jsx";
-import { ImageMoverArea } from "./ImageMoverArea.jsx";
+import { MovableFluidArea } from "../components/MovableFluidArea.jsx";
+import { ImageMoverArea } from "../components/ImageMoverArea.jsx";
 import { useKeypress } from "../utils/KeypressHook.jsx";
 import { useParams  } from "react-router-dom";
 import { store } from '../store.js';
@@ -15,7 +15,7 @@ const viewTooltip = "Image can be zoomed and moved if toggled on to green. "
 const menuTooltip = "Go back to overview";
 const lockTooltip = "Lock mode disabled movement of widgets";
 
-export default function ImageView() {
+export default function ImagePage() {
     let { guid } = useParams();
     const globalState = useContext(store);
     const { dispatch, state } = globalState;

@@ -6,11 +6,11 @@ import { isElectron } from "../utils/platform-util";
 import { store } from "../store.js";
 import * as dayjs from 'dayjs'
 import { useNavigate } from "react-router-dom";
-import "./OverviewView.css";
+import "./OverviewPage.css";
 import {exportToCsv, matchAndExportToCsv} from "../utils/csv-exporter";
 import {isDarkTheme, setTheme} from "../utils/dark-mode";
-import TableControls from "./TableControls.jsx";
-import TableView from "./TableView.jsx";
+import TableControls from "../components/TableControls.jsx";
+import TableView from "../components/TableView.jsx";
 import {persistState, hydrateState} from "../persist.js";
 
 const imageTooltip = "Open folder containing images";
@@ -20,7 +20,7 @@ const loadTooltip = "Load exisiting project";
 const darkModeTooltip = "Toggle between dark and light theme";
 
 
-export default function OverviewView() {
+export default function OverviewPage() {
     const globalState = useContext(store);
     const { dispatch, state } = globalState;
     const [isLoading, setLoading ] =  useState(false);
