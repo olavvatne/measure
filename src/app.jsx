@@ -1,7 +1,7 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
-import ImageView from "./components/ImageView.jsx";
-import OverviewView from "./components/OverviewView.jsx";
+import ImagePage from "./pages/ImagePage.jsx";
+import OverviewPage from "./pages/OverviewPage.jsx";
 import { StateProvider } from './store.js';
 import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import ImageAccessApi from "./utils/image-access";
@@ -21,8 +21,8 @@ function App() {
         <StateProvider>
             <Router>
                 <Routes>
-                    <Route  exact={true} path="/"  element={<OverviewView/>} />
-                    <Route  path="/image/:guid" element={<ImageView />} />
+                    <Route  exact={true} path="/"  element={<OverviewPage/>} />
+                    <Route  path="/image/:guid" element={<ImagePage />} />
                 </Routes>
             </Router>
         </StateProvider>
