@@ -104,7 +104,7 @@
     "webpack-dev-server": "^5.0.4"
   },
   "dependencies": {
-    "@primer/octicons-react": "^19.9.0",
+    "@phosphor-icons/react": "^2.1.5",
     "dayjs": "^1.11.11",
     "electron-squirrel-startup": "^1.0.1",
     "exifr": "^7.1.3",
