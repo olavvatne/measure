@@ -1,17 +1,17 @@
+import { DownloadIcon, ImageIcon, MoonIcon, PaperAirplaneIcon, SunIcon, UploadIcon } from '@primer/octicons-react';
+import * as dayjs from 'dayjs';
 import React, { useContext, useMemo, useState } from "react";
-import { useTable, useSortBy, useResizeColumns, useBlockLayout, useAbsoluteLayout, usePagination } from "react-table"
-import {SunIcon, MoonIcon, ImageIcon, UploadIcon, DownloadIcon, PaperAirplaneIcon} from '@primer/octicons-react'
-import { createHash } from "../utils/guid.js";
-import { isElectron } from "../utils/platform-util";
-import { store } from "../store.js";
-import * as dayjs from 'dayjs'
 import { useNavigate } from "react-router-dom";
-import "./OverviewPage.css";
-import {exportToCsv, matchAndExportToCsv} from "../utils/csv-exporter";
-import {isDarkTheme, setTheme} from "../utils/dark-mode";
+import { useBlockLayout, usePagination, useResizeColumns, useSortBy, useTable } from "react-table";
 import TableControls from "../components/TableControls.jsx";
 import TableView from "../components/TableView.jsx";
-import {persistState, hydrateState} from "../persist.js";
+import { hydrateState, persistState } from "../persist.js";
+import { store } from "../store.js";
+import { exportToCsv, matchAndExportToCsv } from "../utils/csv-exporter";
+import { isDarkTheme, setTheme } from "../utils/dark-mode";
+import { createHash } from "../utils/guid.js";
+import { isElectron } from "../utils/platform-util";
+import "./OverviewPage.css";
 
 const imageTooltip = "Open folder containing images";
 const exportTooltip = "Export data options";

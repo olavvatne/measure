@@ -1,6 +1,6 @@
-import React from "react";
+import * as dayjs from 'dayjs';
 import PropTypes from "prop-types";
-import * as dayjs from 'dayjs'
+import React from "react";
 
 export default function TableView({onRowClick, tableInstance}) {
 

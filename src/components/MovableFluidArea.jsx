@@ -1,9 +1,9 @@
-import * as React from "react";
-import PropTypes from "prop-types";
-import Moveable from "react-moveable";
 import MoveableHelper from "moveable-helper";
-import "./MovableFluidArea.css"
-import { EdgeClickable, DimensionViewable, LabelLeftViewable, LabelRightViewable } from "./ables";
+import PropTypes from "prop-types";
+import * as React from "react";
+import Moveable from "react-moveable";
+import "./MovableFluidArea.css";
+import { DimensionViewable, EdgeClickable, LabelLeftViewable, LabelRightViewable } from "./ables";
 
 function posToValue(pos, padding, width, valueLeft, valueRight) {
     const lineInPixel = width - 2 * padding;
