@@ -1,42 +1,43 @@
-const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const FaviconsWebpackPlugin = require('favicons-webpack-plugin')
+const path = require("path");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
-  entry: path.resolve(__dirname, './src/renderer.js'),
+  entry: path.resolve(__dirname, "./src/renderer.js"),
   module: {
     rules: [
       {
         test: /\.jsx?$/,
         use: {
-          loader: 'babel-loader',
+          loader: "babel-loader",
           options: {
             exclude: /node_modules/,
-            presets: ['@babel/preset-react']
-          }
-        }
+            presets: ["@babel/preset-react"],
+          },
+        },
       },
       {
         test: /\.css$/,
-        use: [{ loader: 'style-loader' }, { loader: 'css-loader' }],
-      }
+        use: [{ loader: "style-loader" }, { loader: "css-loader" }],
+      },
     ],
   },
   optimization: {
-    splitChunks: { chunks: "all" }
+    splitChunks: { chunks: "all" },
   },
   resolve: {
-    extensions: ['*', '.js', 'jsx']
+    extensions: ["*", ".js", "jsx"],
   },
   output: {
-    path: path.resolve(__dirname, './dist'),
-    filename: '[name].[chunkhash].bundle.js',
+    path: path.resolve(__dirname, "./dist"),
+    filename: "[name].[chunkhash].bundle.js",
   },
   devServer: {
-    static: path.resolve(__dirname, './src'),
+    static: path.resolve(__dirname, "./src"),
   },
-  plugins: [new HtmlWebpackPlugin({
-    template: path.resolve(__dirname, './src/index.html')
-  }),
-  new FaviconsWebpackPlugin("./src/resources/measure.png")],
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: path.resolve(__dirname, "./src/index.html"),
+      favicon: "./src/resources/icon.ico",
+    }),
+  ],
 };
