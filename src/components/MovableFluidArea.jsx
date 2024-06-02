@@ -148,7 +148,7 @@ const EdgeClickable = {
                 transform: transform,
                 transformOrigin: "0px 0px"
         }}>
-            <div style={{width: rect.offsetWidth, height: rect.offsetHeight}}>
+            <div style={{width: rect.offsetWidth, height: rect.offsetHeight}} onClick={moveable.props.onFluidEdge}>
                 <div style={{
                     position: "absolute",
                     pointerEvents: "none",
@@ -213,9 +213,8 @@ export function MovableFluidArea({imageId = "", name = "og", color = "red", disp
     const transform = `rotate(${s.rotation || 0}deg)`;
 
     function onFluidEdge(e) {
-        const rect = e.moveable.getRect();
-        const padding = Math.max(30, rect.offsetWidth * 0.05);
-        const value = posToValue( e.inputEvent.offsetX, padding, rect.offsetWidth, measureValues.minValue, measureValues.maxValue);
+        const padding = Math.max(30, e.target.offsetWidth * 0.05);
+        const value = posToValue( e.nativeEvent.offsetX, padding, e.target.offsetWidth, measureValues.minValue, measureValues.maxValue);
         setValue(value)
     }
 
@@ -226,10 +225,6 @@ export function MovableFluidArea({imageId = "", name = "og", color = "red", disp
             className={name + " " + color}
             key={imageId + name}
             ref={moveableRef}
-            onClick={e => {
-                console.log(e);
-               onFluidEdge(e)
-            }}
             target={targetRef}
             ables={[DimensionViewable, LabelLeftViewable, LabelRightViewable, EdgeClickable]}
             props={{
@@ -252,7 +247,8 @@ export function MovableFluidArea({imageId = "", name = "og", color = "red", disp
                     if (e.target.validity.valid) {
                         setMeasureValues({...measureValues, minValue: parseFloat(e.target.value)});
                     }
-                }
+                },
+                onFluidEdge: onFluidEdge
             }}
             renderDirections={["n", "s", "w", "e"]}
             origin={false}

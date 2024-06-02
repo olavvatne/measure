@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext } from "react";
-import {ArrowLeftIcon, ArrowRightIcon, SearchIcon, RowsIcon} from '@primer/octicons-react'
+import {ArrowLeftIcon, ArrowRightIcon, SearchIcon, RowsIcon, LockIcon} from '@primer/octicons-react'
 import { MovableFluidArea } from "./MovableFluidArea.jsx";
 import { ImageMoverArea } from "./ImageMoverArea.jsx";
 import { useKeypress } from "../utils/KeypressHook.jsx";
@@ -13,6 +13,7 @@ const previousTooltip = "Go to the previous image";
 const viewTooltip = "Image can be zoomed and moved if toggled on to green. "
     + "If toggled off you can modify the measuring widgets";
 const menuTooltip = "Go back to overview";
+const lockTooltip = "Lock mode disabled movement of widgets";
 
 export default function ImageView() {
     let { guid } = useParams();
@@ -21,6 +22,7 @@ export default function ImageView() {
     let navigate = useNavigate();
     const image = state.images[guid] || {};
     const [imageMode, setImageMode] = useState(false);
+    const [lockMode, setLockMode] = useState(false);
     const [fluidValues, setFluidValues] = useState({og: image.values?.og, ow: image.values?.ow});
     const [measure, setMeasure] = useState({og: state?.currentMeasurer.og, ow: state?.currentMeasurer.ow});
 
@@ -60,6 +62,11 @@ export default function ImageView() {
         setImageMode(!imageMode)
     }, [imageMode]);
 
+    useKeypress("w", () => {
+        setLockMode(!lockMode)
+    }, [lockMode]);
+
+
     useKeypress("ArrowRight", () => {
         next();
     }, [image.id, image, measure, fluidValues]);
@@ -98,7 +105,6 @@ export default function ImageView() {
     function overview() {
         navigateTo("/");
     }
-    const checkStyle = imageMode ? "primary-button" : "secondary-button";
     const buttonStyle = ""
     return (
         <div className="image-container">
@@ -106,10 +112,18 @@ export default function ImageView() {
                 <button title={menuTooltip} className={buttonStyle} onClick={overview}>
                     <RowsIcon size={16} />
                 </button>
-                <button title={viewTooltip} className={"" + " " + checkStyle}
-                        onClick={e => setImageMode(!imageMode)}>
-                    <SearchIcon size={16} />
-                </button>
+                <div>
+                    <button title={viewTooltip} 
+                        className={imageMode ? "primary-button" : "secondary-button"}
+                            onClick={() => setImageMode(!imageMode)}>
+                        <SearchIcon size={16} />
+                    </button>
+                    <button title={lockTooltip} 
+                        className={lockMode ? "primary-button" : "secondary-button"}
+                            onClick={() => setLockMode(!lockMode)}>
+                        <LockIcon size={16} />
+                    </button>
+                </div>
                 <div className="controls">
                     {image.prevId ? 
                         <button title={previousTooltip}  
@@ -136,7 +150,7 @@ export default function ImageView() {
                     displayName="O/G" 
                     color="red" 
                     position="left" 
-                    disabled={imageMode} 
+                    disabled={imageMode || lockMode} 
                     value={fluidValues.og}
                     setValue={v => setFluidValues({og: v, ow: fluidValues.ow})}
                     measureValues={measure.og}
@@ -149,7 +163,7 @@ export default function ImageView() {
                     name="ow" displayName="O/W"
                     color="blue"
                     position="right"
-                    disabled={imageMode}
+                    disabled={imageMode || lockMode}
                     value={fluidValues.ow}
                     setValue={v => setFluidValues({ow: v, og: fluidValues.og})}
                     measureValues={measure.ow}
