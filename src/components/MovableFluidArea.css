@@ -28,6 +28,7 @@
   }
 
 .edge-line {
+    box-shadow: rgba(0, 0, 0, 0.35) 0 0 15px;
     background: yellow;
 }
 
