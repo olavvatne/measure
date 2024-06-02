@@ -1,4 +1,4 @@
-import { DownloadIcon, ImageIcon, MoonIcon, PaperAirplaneIcon, SunIcon, UploadIcon } from '@primer/octicons-react';
+import { UploadSimple, Image, Moon, Export, Sun, DownloadSimple } from '@phosphor-icons/react';
 import * as dayjs from 'dayjs';
 import React, { useContext, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -19,6 +19,7 @@ const saveTooltip = "Save current project to file";
 const loadTooltip = "Load exisiting project";
 const darkModeTooltip = "Toggle between dark and light theme";
 
+const ICON_SIZE = 24;
 
 export default function OverviewPage() {
     const globalState = useContext(store);
@@ -128,16 +129,20 @@ export default function OverviewPage() {
     }
     return (
         <div>
-            <div style={{padding: "5px"}}>
-                <button title={imageTooltip} onClick={() => readFolder()}><ImageIcon size={16} /></button>
-                <button title={darkModeTooltip} onClick={toggleDarkMode}>{isDarkMode ? <MoonIcon size={16} /> : <SunIcon size={16} />}</button>
-                <button title={exportTooltip} onClick={toggleDropdown} disabled={!Object.keys(state.images).length > 0}><PaperAirplaneIcon size={16} /></button>
+            <div className="top-bar">
+                <div>
+                <button title={imageTooltip} onClick={() => readFolder()}><Image size={ICON_SIZE} /></button>
+                <button title={exportTooltip} onClick={toggleDropdown} disabled={!Object.keys(state.images).length > 0}><Export size={ICON_SIZE} /></button>
                 <div id="export-dropdown" className="dropdown-content">
                     <a onClick={() => exportToCsv(state.images)}>Export to csv</a>
                     <a onClick={() => matchAndExportToCsv(state.images)}>Match and export to csv</a>
                 </div>
-                <button title={saveTooltip} onClick={() => window.fileApi.storeJson(persistState(state))}><DownloadIcon size={16} /></button>
-                <button title={loadTooltip} onClick={onLoadAppData}><UploadIcon size={16} /></button>
+                </div>
+                <button title={darkModeTooltip} onClick={toggleDarkMode}>{isDarkMode ? <Moon size={ICON_SIZE} /> : <Sun size={ICON_SIZE} />}</button>
+                <div>
+                <button title={saveTooltip} onClick={() => window.fileApi.storeJson(persistState(state))}><DownloadSimple size={ICON_SIZE} /></button>
+                <button title={loadTooltip} onClick={onLoadAppData}><UploadSimple size={ICON_SIZE} /></button>
+                </div>
                 {isFileAccessSupport ? null : <span style={{color: "red"}}>Measure only works in Chrome or Edge</span>}
             </div>
             { isLoading ? <div className="center-spinner loader"></div> : null }

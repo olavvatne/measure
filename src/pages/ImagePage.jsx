@@ -1,4 +1,4 @@
-import { ArrowLeftIcon, ArrowRightIcon, LockIcon, RowsIcon, SearchIcon } from '@primer/octicons-react';
+import { ArrowLeft, ArrowRight, Lock, MagnifyingGlass, Rows } from '@phosphor-icons/react';
 import * as dayjs from 'dayjs';
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -13,6 +13,8 @@ const viewTooltip = "Image can be zoomed and moved if toggled on to green. "
     + "If toggled off you can modify the measuring widgets";
 const menuTooltip = "Go back to overview";
 const lockTooltip = "Lock mode disabled movement of widgets";
+
+const ICON_SIZE = 24;
 
 export default function ImagePage() {
     let { guid } = useParams();
@@ -107,20 +109,20 @@ export default function ImagePage() {
     const buttonStyle = ""
     return (
         <div className="image-container">
-            <div className="top-bar">
+            <div className="top-bar floating">
                 <button title={menuTooltip} className={buttonStyle} onClick={overview}>
-                    <RowsIcon size={16} />
+                    <Rows size={ICON_SIZE} />
                 </button>
                 <div>
                     <button title={viewTooltip} 
                         className={imageMode ? "primary-button" : "secondary-button"}
                             onClick={() => setImageMode(!imageMode)}>
-                        <SearchIcon size={16} />
+                        <MagnifyingGlass size={ICON_SIZE} />
                     </button>
                     <button title={lockTooltip} 
                         className={lockMode ? "primary-button" : "secondary-button"}
                             onClick={() => setLockMode(!lockMode)}>
-                        <LockIcon size={16} />
+                        <Lock size={ICON_SIZE} />
                     </button>
                 </div>
                 <div className="controls">
@@ -128,14 +130,14 @@ export default function ImagePage() {
                         <button title={previousTooltip}  
                                 className={"controls-prev " + buttonStyle} 
                                 onClick={prev}>
-                            <ArrowLeftIcon size={16} />
+                            <ArrowLeft size={ICON_SIZE} />
                         </button> 
                     : null }
                     {image.nextId ? 
                         <button title={nextTooltip} 
                                 className={"controls-next " + buttonStyle} 
                                 onClick={next}>
-                            <ArrowRightIcon size={16} />
+                            <ArrowRight size={ICON_SIZE} />
                         </button> 
                     : null }
                 </div>
