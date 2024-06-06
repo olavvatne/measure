@@ -32,3 +32,5 @@ const LabelRightViewable = {
         </div>
     }
 };
+
+export default LabelRightViewable;
