@@ -1,4 +1,4 @@
-import MoveableHelper from "moveable-helper";
+import MoveableHelper from "./MoveableHelper";
 import PropTypes from "prop-types";
 import * as React from "react";
 import Moveable from "react-moveable";
