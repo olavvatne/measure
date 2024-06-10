@@ -133,6 +133,7 @@ export default function OverviewPage() {
                 <div>
                 <button title={imageTooltip} onClick={() => readFolder()}><Image size={ICON_SIZE} /></button>
                 <button title={exportTooltip} onClick={toggleDropdown} disabled={!Object.keys(state.images).length > 0}><Export size={ICON_SIZE} /></button>
+                {isFileAccessSupport ? null : <span style={{color: "red"}}>Measure only works in Chrome or Edge</span>}
                 <div id="export-dropdown" className="dropdown-content">
                     <a onClick={() => exportToCsv(state.images)}>Export to csv</a>
                     <a onClick={() => matchAndExportToCsv(state.images)}>Match and export to csv</a>
@@ -143,7 +144,6 @@ export default function OverviewPage() {
                 <button title={saveTooltip} onClick={() => window.fileApi.storeJson(persistState(state))}><DownloadSimple size={ICON_SIZE} /></button>
                 <button title={loadTooltip} onClick={onLoadAppData}><UploadSimple size={ICON_SIZE} /></button>
                 </div>
-                {isFileAccessSupport ? null : <span style={{color: "red"}}>Measure only works in Chrome or Edge</span>}
             </div>
             { isLoading ? <div className="center-spinner loader"></div> : null }
             { data.length > 0 ? 

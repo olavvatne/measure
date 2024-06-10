@@ -1,4 +1,4 @@
-import MoveableHelper from "./MoveableHelper";
+import MoveableFrame from "./MoveableFrame";
 import PropTypes from "prop-types";
 import * as React from "react";
 import Moveable from "react-moveable";
@@ -13,28 +13,26 @@ function posToValue(pos, padding, width, valueLeft, valueRight) {
     return edgeValue;
 }
 
-
+const framer = new MoveableFrame();
 export function MovableFluidArea({imageId = "", name = "og", color = "red", displayName = "O/G", disabled=false, measureValues={minValue: 5, minValue: 10, rotation: 0, x: 20, y: 20, offsetWidth: 200, offsetHeight: 200}, value=null, setValue= () => {}, setMeasureValues = () => {}}) {
-    
-    const [helper] = React.useState(() => {
-        return new MoveableHelper();
-    })
-    
+        
     const targetRef = React.useRef(null);
     const moveableRef = React.useRef(null);
     
     React.useEffect(() => {
         if (moveableRef.current) {
 
-            var frame = helper.createFrame(targetRef.current);
+            var frame = framer.createFrame(targetRef.current);
             if (measureValues && measureValues.rotation) {
                 moveableRef.current.moveable.rotation = measureValues.rotation;
-                frame.properties.transform.rotate = measureValues.rotation + "deg";
+                frame.transform.rotate = measureValues.rotation;
                 moveableRef.current.moveable.request("rotatable", { rotate: measureValues.rotation }, true);
 
             }
 
             if (measureValues && measureValues.offsetHeight && measureValues.offsetWidth) {
+                frame.dimensions.width = measureValues.offsetWidth;
+                frame.dimensions.height = measureValues.offsetHeight;
                 moveableRef.current.moveable.request("resizable", { offsetWidth: measureValues.offsetWidth, offsetHeight: measureValues.offsetHeight }, true);
             }
 
@@ -97,27 +95,28 @@ export function MovableFluidArea({imageId = "", name = "og", color = "red", disp
             resizable={!disabled}
             rotatable={!disabled}
             onDragStart={e => {
-                helper.onDragStart(e)
+                framer.onDragStart(e)
             }}
             onDrag={e => {
-                helper.onDrag(e)
+                framer.onDrag(e)
             }}
             onDragEnd={(e) => {
-                const targetMap = helper.map.get(e.target);
-                const newX = (measureValues.x || 0) + parseFloat(targetMap.properties.transform.translate.value[0].replace("px", ""));
-                const newY =  (measureValues.y || 0) + parseFloat(targetMap.properties.transform.translate.value[1].replace("px", ""));
+                const translate = framer.getTranslate(e.target);
+
+                const newX = (measureValues.x || 0) + translate.x;
+                const newY =  (measureValues.y || 0) + translate.y;
                 setMeasureValues({...measureValues, x: newX, y: newY});
             }}
-            onResizeStart={helper.onResizeStart}
-            onResize={helper.onResize}
+            onResizeStart={framer.onResizeStart}
+            onResize={framer.onResize}
             onResizeEnd={(e) => {
-                const targetMap = helper.map.get(e.target);
-                const newX = (measureValues.x || 0) + parseFloat(targetMap.properties.transform.translate.value[0].replace("px", ""));
-                const newY =  (measureValues.y || 0) + parseFloat(targetMap.properties.transform.translate.value[1].replace("px", ""));
+                const translate = framer.getTranslate(e.target);
+                const newX = (measureValues.x || 0) + translate.x;
+                const newY =  (measureValues.y || 0) + translate.y;
                 setMeasureValues({...measureValues, y: newY, x: newX, offsetHeight: e.lastEvent.offsetHeight, offsetWidth: e.lastEvent.offsetWidth});
             }}
-            onRotateStart={helper.onRotateStart}
-            onRotate={helper.onRotate}
+            onRotateStart={framer.onRotateStart}
+            onRotate={framer.onRotate}
           
             onRotateEnd={(e) => {
                 if (!measureValues.rotation) {
