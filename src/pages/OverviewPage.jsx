@@ -36,7 +36,6 @@ export default function OverviewPage() {
         setLoading(true);
         window.imageApi.openDialog().then(async files => {
             var data = {};
-            console.log(files);
             for (let i = 0; i < files.length; i++) {
                 const guid = await createHash(files[i].path);
                 const nextId = i >= files.length - 1 ? null : await createHash(files[i + 1].path);
@@ -74,7 +73,6 @@ export default function OverviewPage() {
             m.id = "ow";
             return m;
         })
-        console.log(og);
         return [...og, ...ow, ...Object.values(state.images)]; 
     }, [state.images]);
 
