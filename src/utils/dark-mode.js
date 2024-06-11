@@ -33,10 +33,8 @@ export function setTheme(isDark) {
     }
   } else {
     if (isDark) {
-      console.log("hello");
       document.documentElement.setAttribute("data-theme", "dark");
     } else {
-      console.log("hello2");
       document.documentElement.setAttribute("data-theme", "light");
     }
   }

@@ -53,8 +53,6 @@ export async function matchAndExportToCsv(rows) {
           return null;
         });
         const imageDates = data.map((d) => d.date);
-        console.log(timestamps);
-        console.log(imageDates);
         const matchings = matcher.match(timestamps, imageDates);
         for (let i = 0; i < matchings.length; i++) {
           const { from, to, comment } = matchings[i];
@@ -65,8 +63,6 @@ export async function matchAndExportToCsv(rows) {
           }
           results.data[from].push(...values);
         }
-        console.log(results);
-        console.log(matchings);
 
         const csv = Papa.unparse(results.data);
 

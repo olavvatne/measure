@@ -11,7 +11,6 @@ import { isElectron } from "./utils/platform-util";
 
 
 function App() {
-    console.log(isElectron());
     if (!isElectron()) {
         window.imageApi = new ImageAccessApi();
         window.fileApi = new JsonAccessApi();
