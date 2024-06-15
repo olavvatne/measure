@@ -42,3 +42,18 @@ th,
     opacity: 1;
   }
 }
+
+.calibration-td {
+  text-align: center;
+}
+.calibration-td span {
+  margin: 0 0.5rem;
+}
+
+.calibration-td.og {
+  background-color: var(--og-background);
+}
+
+.calibration-td.ow {
+  background-color: var(--ow-background);
+}

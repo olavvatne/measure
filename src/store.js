@@ -112,6 +112,7 @@ const StateProvider = ({ children }) => {
               break;
             }
           }
+          newValues.type = "calibration";
 
           const newImages = {
             ...newState.images,
