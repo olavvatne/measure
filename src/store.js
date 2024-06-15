@@ -1,96 +1,90 @@
-import React, {createContext, useReducer} from 'react';
+import React, { createContext, useReducer } from "react";
 
 const initialState = {
-    version: 1,
-    images: {
-
-    },
-    currentMeasurer: {
-      og: null,
-      ow: null,
-    },
-    historicMeasurer: {
-      og: {
-        "0": {
-          fromDate: 0,
-          offsetWidth: 200,
-          offsetHeight: 100,
-          x: 20,
-          y: 100,
-          minValue: 1,
-          maxValue: 18,
-          minLocation: null,
-          maxLocation: null,
-        }
-      },
-      ow: {
-        "0": {
-          fromDate: 0,
-          x: 320,
-          y: 100,
-          offsetWidth: 200,
-          offsetHeight: 100,
-          minValue: 1,
-          maxValue: 18,
-          minLocation: null,
-          maxLocation: null,
-        }
+  version: 1,
+  images: {},
+  currentMeasurer: {
+    og: null,
+    ow: null,
+  },
+  historicMeasurer: {
+    og: {
+      0: {
+        fromDate: 0,
+        offsetWidth: 200,
+        offsetHeight: 100,
+        x: 20,
+        y: 100,
+        minValue: 1,
+        maxValue: 18,
+        minLocation: null,
+        maxLocation: null,
       },
     },
-    view: {
-      scale: 1, 
-      pointX: 0, 
-      pointY: 0, 
+    ow: {
+      0: {
+        fromDate: 0,
+        x: 320,
+        y: 100,
+        offsetWidth: 200,
+        offsetHeight: 100,
+        minValue: 1,
+        maxValue: 18,
+        minLocation: null,
+        maxLocation: null,
+      },
     },
-    table: {
-      pageIndex: 0,
-      pageSize: 20,
-    }
+  },
+  view: {
+    scale: 1,
+    pointX: 0,
+    pointY: 0,
+  },
 };
 const store = createContext(initialState);
 const { Provider } = store;
 
-const StateProvider = ( { children } ) => {
+const StateProvider = ({ children }) => {
   const [state, dispatch] = useReducer((state, action) => {
     let newState = null;
-    switch(action.type) {
-      case 'ViewChangeAction':
-        newState = {...state, view: action.data };
+    switch (action.type) {
+      case "ViewChangeAction":
+        newState = { ...state, view: action.data };
         return newState;
-      case 'HydrateAction':
-          newState = action.data;
-          return newState;
-      case 'TableChangeAction':
-        newState = {...state, table: {...state.table, ...action.data} };
+      case "HydrateAction":
+        newState = action.data;
         return newState;
-      case 'ImagesChangeAction':
-        newState = {...state, images: action.data };
+      case "TableChangeAction":
+        newState = { ...state, table: { ...state.table, ...action.data } };
         return newState;
-      case 'SetCurrentMeasurerAction': {
+      case "ImagesChangeAction":
+        newState = { ...state, images: action.data };
+        return newState;
+      case "SetCurrentMeasurerAction": {
         const dateUnix = action.data.dateUnix;
         const measurers = Object.keys(state.historicMeasurer);
         const newCurrent = {};
-        for (let i = 0; i < measurers.length; i ++) {
+        for (let i = 0; i < measurers.length; i++) {
           const m = Object.values(state.historicMeasurer[measurers[i]]);
-          const closestMatch = m.reduce(function(prev, current) {
+          const closestMatch = m.reduce(function (prev, current) {
             const prevDiff = dateUnix - prev.fromDate;
             const currentDiff = dateUnix - current.fromDate;
             if (currentDiff < 0) {
               return prev;
             }
-            
-            return (prevDiff > currentDiff) ? current : prev
-          }); 
+
+            return prevDiff > currentDiff ? current : prev;
+          });
           newCurrent[measurers[i]] = closestMatch;
         }
-        newState = {...state, currentMeasurer: newCurrent };
+        newState = { ...state, currentMeasurer: newCurrent };
         return newState;
       }
-      case 'NewMeasureValuesAction': {
+      case "NewMeasureValuesAction": {
         const measureKeys = Object.keys(action.data);
-        let newState = {...state};
+        let newState = { ...state };
 
-        for (let i = 0; i < measureKeys.length; i ++) {
+        for (let i = 0; i < measureKeys.length; i++) {
           const k = measureKeys[i];
           const d = action.data[k];
 
@@ -102,7 +96,10 @@ const StateProvider = ( { children } ) => {
             // return {...state};
           }
 
-          let union = new Set([...Object.keys(newValues), ...Object.keys(current)]);
+          let union = new Set([
+            ...Object.keys(newValues),
+            ...Object.keys(current),
+          ]);
           union.delete("fromDate");
           union.delete("value");
           union.delete("id");
@@ -115,7 +112,7 @@ const StateProvider = ( { children } ) => {
               break;
             }
           }
-  
+
           const newImages = {
             ...newState.images,
             [d.id]: {
@@ -123,16 +120,16 @@ const StateProvider = ( { children } ) => {
               values: {
                 ...newState.images[d.id].values,
                 [d.name]: d.recordedValues[d.name],
-              }
-            }
+              },
+            },
           };
-  
-          if(isEqual) {
-            newState  = {...newState, images: newImages};
+
+          if (isEqual) {
+            newState = { ...newState, images: newImages };
             continue;
           }
           newState = {
-            ...newState, 
+            ...newState,
             historicMeasurer: {
               ...newState.historicMeasurer,
               [d.name]: {
@@ -140,21 +137,21 @@ const StateProvider = ( { children } ) => {
                 [dateUnix + ""]: {
                   ...newValues,
                   fromDate: dateUnix,
-                }
+                },
+              },
             },
-          },
-          images: newImages
+            images: newImages,
           };
         }
         return newState;
       }
-       
+
       default:
         throw new Error();
-    };
+    }
   }, initialState);
 
   return <Provider value={{ state, dispatch }}>{children}</Provider>;
 };
 
-export {store, StateProvider};
+export { store, StateProvider };
