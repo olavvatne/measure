@@ -1,41 +1,37 @@
 .red .moveable-control {
-    background: red !important;
+  background: red !important;
 }
 
 .red .moveable-line {
-    background: red !important;
+  background: red !important;
 }
 
 .blue .moveable-control {
-    background: blue !important;
+  background: blue !important;
 }
 
 .blue .moveable-line {
-    background: blue !important;
+  background: blue !important;
 }
 
 .target {
-    position: absolute;
-    width: 250px;
-    height: 100px;
-    /* top: 150px; */
-    line-height: 100px;
-    text-align: center;
-    color: #333;
-    font-weight: bold;
-    border: 1px solid #333;
-    box-sizing: border-box;
-  }
-
-.edge-line {
-    box-shadow: rgba(0, 0, 0, 0.35) 0 0 15px;
-    background: yellow;
+  position: absolute;
+  width: 250px;
+  height: 100px;
+  /* top: 150px; */
+  line-height: 100px;
+  text-align: center;
+  color: #333;
+  font-weight: bold;
+  border: 1px solid #333;
+  box-sizing: border-box;
 }
 
-.measure-row {
-    background-color: var(--measure-row-background) !important;
+.edge-line {
+  box-shadow: rgba(0, 0, 0, 0.35) 0 0 15px;
+  background: yellow;
 }
 
 .moveable-edge-clickable {
-    cursor: default;
+  cursor: default;
 }

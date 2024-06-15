@@ -68,18 +68,27 @@ export default function TableView({ onRowClick, table }) {
       </thead>
       <tbody>
         {table.getRowModel().rows.map((row) => (
-          <tr
-            key={row.id}
-            onClick={() => onRowClick(row)}
-            className={
-              row.original.fromDate !== undefined ? "measure-row" : null
-            }
-          >
-            {row.getVisibleCells().map((cell) => (
-              <td key={cell.id}>
-                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+          <tr key={row.id} onClick={() => onRowClick(row)}>
+            {row.original.type === "data" ? (
+              row
+                .getVisibleCells()
+                .map((cell) => (
+                  <td key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
+                ))
+            ) : (
+              <td colSpan="5" className={"calibration-td " + row.original.id}>
+                <span>{row.original.id}</span>
+                <span>Min: {row.original.minValue}</span>
+                <span>Max: {row.original.maxValue}</span>
+                <span>W: {row.original.offsetWidth.toFixed(2)}</span>
+                <span>H: {row.original.offsetHeight.toFixed(2)}</span>
+                <span>X: {row.original.x.toFixed(2)}</span>
+                <span>Y: {row.original.y.toFixed(2)}</span>
+                <span>R: {(row.original.rotation || 0).toFixed(2)}</span>
               </td>
-            ))}
+            )}
           </tr>
         ))}
       </tbody>

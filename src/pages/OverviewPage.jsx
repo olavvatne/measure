@@ -62,6 +62,7 @@ export default function OverviewPage() {
           const prevId = i <= 0 ? null : await createHash(files[i - 1].path);
           data[guid] = {
             id: guid,
+            type: "data",
             path: files[i].path,
             date: dayjs(files[i].date).unix(),
             values: {},
@@ -96,35 +97,6 @@ export default function OverviewPage() {
       size: 60,
       cell: (info) => info.getValue()?.toFixed(3),
       header: () => <span>O/W</span>,
-    }),
-    columnHelper.accessor((row) => row, {
-      id: "limits",
-      cell: (info) => {
-        const row = info.getValue();
-        if (!row.fromDate) {
-          return "";
-        }
-        return `Min: ${row.minValue} Max: ${row.maxValue}`;
-      },
-      header: () => <span>Limits</span>,
-    }),
-    columnHelper.accessor((row) => row, {
-      id: "shape",
-      cell: (info) => {
-        const row = info.getValue();
-        if (!row.fromDate) {
-          return "";
-        }
-        const d = {
-          w: row.offsetWidth.toFixed(2),
-          h: row.offsetHeight.toFixed(2),
-          x: row.x.toFixed(2),
-          y: row.y.toFixed(2),
-          r: (row.rotation || 0).toFixed(2),
-        };
-        return `W: ${d.w} H: ${d.h} X: ${d.x} Y: ${d.y} R: ${d.r}`;
-      },
-      header: () => <span>Shape</span>,
     }),
     columnHelper.accessor((row) => row.path, {
       id: "path",
