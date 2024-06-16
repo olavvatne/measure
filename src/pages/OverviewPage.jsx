@@ -16,8 +16,7 @@ import {
   getSortedRowModel,
   createColumnHelper,
 } from "@tanstack/react-table";
-import TableControls from "../components/TableControls.jsx";
-import TableView from "../components/TableView.jsx";
+import { TableControls, TableView } from "../components/table";
 import { hydrateState, persistState } from "../persist.js";
 import { store } from "../store.js";
 import { exportToCsv, matchAndExportToCsv } from "../utils/csv-exporter";
