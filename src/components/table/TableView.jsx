@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import React from "react";
 import { flexRender } from "@tanstack/react-table";
+import "./TableView.css";
 
 export default function TableView({ onRowClick, table }) {
   return (
