@@ -9,14 +9,7 @@ import {
 import * as dayjs from "dayjs";
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  useReactTable,
-  getCoreRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  createColumnHelper,
-} from "@tanstack/react-table";
-import { TableControls, TableView } from "../components/table";
+import { createMeasureTable } from "../components/table";
 import { hydrateState, persistState } from "../persist.js";
 import { store } from "../store.js";
 import { exportToCsv, matchAndExportToCsv } from "../utils/csv-exporter";
@@ -38,10 +31,6 @@ export default function OverviewPage() {
   const { dispatch, state } = globalState;
   const [isLoading, setLoading] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(isDarkTheme());
-  const [pagination, setPagination] = useState({
-    pageIndex: 0,
-    pageSize: 20,
-  });
 
   // Only edge and chrome support the file access api
   const isFileAccessSupport = !!window.showSaveFilePicker || isElectron();
@@ -77,37 +66,6 @@ export default function OverviewPage() {
       });
   }
 
-  const columnHelper = createColumnHelper();
-  const columns = [
-    columnHelper.accessor((row) => row.date || row.fromDate, {
-      id: "date",
-      size: 170,
-      cell: (info) => dayjs.unix(info.getValue()).format("YYYY-MM-DD HH:mm:ss"),
-      header: () => <span>Date</span>,
-    }),
-    columnHelper.accessor((row) => row.values?.og, {
-      id: "og",
-      size: 60,
-      cell: (info) => info.getValue()?.toFixed(3),
-      header: () => <span>O/G</span>,
-    }),
-    columnHelper.accessor((row) => row.values?.ow, {
-      id: "ow",
-      size: 60,
-      cell: (info) => info.getValue()?.toFixed(3),
-      header: () => <span>O/W</span>,
-    }),
-    columnHelper.accessor((row) => row.path, {
-      id: "path",
-      cell: (info) => info.getValue(),
-      header: () => <span>Path</span>,
-    }),
-    columnHelper.accessor((row) => row.id, {
-      id: "id",
-      cell: (info) => info.getValue(),
-      header: () => <span>Id</span>,
-    }),
-  ];
   const data = React.useMemo(() => {
     let og = Object.values(state.historicMeasurer.og);
     let ow = Object.values(state.historicMeasurer.ow);
@@ -126,32 +84,10 @@ export default function OverviewPage() {
     return [...og, ...ow, ...Object.values(state.images)];
   }, [state.images]);
 
-  const table = useReactTable({
-    columns,
-    data,
-    initialState: {
-      pagination: pagination,
-      sorting: [
-        {
-          id: "date",
-          desc: false,
-        },
-      ],
-    },
-    state: {
-      pagination,
-    },
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    onPaginationChange: setPagination,
-    getSortedRowModel: getSortedRowModel(),
-  });
-
   function onRowClick(row) {
     if (!row?.original?.path) {
       return;
     }
-    console.log(row.original);
     navigate("/image/" + row.original.id);
   }
 
@@ -175,6 +111,8 @@ export default function OverviewPage() {
   function toggleDropdown() {
     document.getElementById("export-dropdown").classList.toggle("show");
   }
+
+  const [tableView, tableControls] = createMeasureTable(data, onRowClick);
   return (
     <div>
       <div className="top-bar">
@@ -217,10 +155,8 @@ export default function OverviewPage() {
         </div>
       </div>
       {isLoading ? <div className="center-spinner loader"></div> : null}
-      {data.length > 0 ? (
-        <TableView table={table} onRowClick={onRowClick} />
-      ) : null}
-      {data.length > 0 ? <TableControls table={table} /> : null}
+      {tableView}
+      {tableControls}
     </div>
   );
 }
