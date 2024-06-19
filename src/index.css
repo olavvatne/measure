@@ -4,6 +4,7 @@
   --transparent-contrast: rgba(0, 0, 0, 0.2);
   --og-background: #db5959;
   --ow-background: #88aadc;
+  --loader-size: 20px;
 }
 
 /* WATER CUSTOMIZATION */
@@ -186,12 +187,15 @@ div#zoom > img {
   background-color: #3cb371;
 }
 
+.small-loader {
+  --loader-size: 20px;
+}
 /* SPINNER */
 .loader,
 .loader:after {
   border-radius: 50%;
-  width: 10em;
-  height: 10em;
+  width: var(--loader-size);
+  height: var(--loader-size);
 }
 .loader {
   margin: auto;
@@ -201,10 +205,10 @@ div#zoom > img {
   top: 0;
   bottom: 0;
   text-indent: -9999em;
-  border-top: 1.1em solid var(--transparent-contrast);
-  border-right: 1.1em solid var(--transparent-contrast);
-  border-bottom: 1.1em solid var(--transparent-contrast);
-  border-left: 1.1em solid var(--text-bright);
+  border-top: calc(var(--loader-size) / 5) solid var(--transparent-contrast);
+  border-right: calc(var(--loader-size) / 5) solid var(--transparent-contrast);
+  border-bottom: calc(var(--loader-size) / 5) solid var(--transparent-contrast);
+  border-left: calc(var(--loader-size) / 5) solid var(--text-bright);
   -webkit-transform: translateZ(0);
   -ms-transform: translateZ(0);
   transform: translateZ(0);
