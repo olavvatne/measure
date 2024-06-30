@@ -149,7 +149,7 @@ export default function ImagePage() {
   }
 
   function overview() {
-    navigateTo("/");
+    navigateTo("/overview");
   }
   const buttonStyle = "";
   return (
@@ -161,14 +161,14 @@ export default function ImagePage() {
         <div>
           <button
             title={viewTooltip}
-            className={imageMode ? "primary-button" : "secondary-button"}
+            className={imageMode ? "active" : ""}
             onClick={() => setImageMode(!imageMode)}
           >
             <MagnifyingGlass size={ICON_SIZE} />
           </button>
           <button
             title={lockTooltip}
-            className={lockMode ? "primary-button" : "secondary-button"}
+            className={lockMode ? "active" : ""}
             onClick={() => setLockMode(!lockMode)}
           >
             <Lock size={ICON_SIZE} />

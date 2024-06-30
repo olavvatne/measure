@@ -30,9 +30,11 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, "./dist"),
     filename: "[name].[chunkhash].bundle.js",
+    publicPath: "/",
   },
   devServer: {
     static: path.resolve(__dirname, "./src"),
+    historyApiFallback: true,
   },
   plugins: [
     new HtmlWebpackPlugin({

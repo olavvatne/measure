@@ -5,11 +5,21 @@
 
 .app-sidebar {
   padding: 8px;
+  justify-content: space-between;
 }
 .app-sidebar,
 .app-sidebar > div {
   display: flex;
   flex-direction: column;
+  gap: 8px;
+}
+
+.app-sidebar button {
+  background-color: var(--background-alt);
+}
+
+.app-sidebar button:hover {
+  background-color: var(--background-body);
 }
 
 .app-content {
