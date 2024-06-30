@@ -7,6 +7,9 @@ import {
 } from "react-router-dom";
 import ImagePage from "./pages/ImagePage.jsx";
 import OverviewPage from "./pages/OverviewPage.jsx";
+import SetupPage from "./pages/SetupPage.jsx";
+import ExportPage from "./pages/ExportPage.jsx";
+import SettingsPage from "./pages/SettingsPage.jsx";
 import Root from "./pages/Root.jsx";
 import { StateProvider } from "./store.js";
 import { detectColorScheme } from "./utils/dark-mode";
@@ -28,7 +31,19 @@ const router = createRouter([
     children: [
       {
         path: "",
+        element: <SetupPage />,
+      },
+      {
+        path: "overview",
         element: <OverviewPage />,
+      },
+      {
+        path: "export",
+        element: <ExportPage />,
+      },
+      {
+        path: "settings",
+        element: <SettingsPage />,
       },
     ],
   },

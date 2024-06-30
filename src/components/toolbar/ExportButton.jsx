@@ -3,7 +3,7 @@ import React from "react";
 import { exportToCsv, matchAndExportToCsv } from "../../utils/csv-exporter";
 import { ICON_SIZE } from "./config";
 
-const exportTooltip = "Export data options";
+const tooltip = "Export project";
 
 export default function ExportButton({ data }) {
   function toggleDropdown() {
@@ -12,7 +12,7 @@ export default function ExportButton({ data }) {
   return (
     <>
       <button
-        title={exportTooltip}
+        title={tooltip}
         onClick={toggleDropdown}
         disabled={!Object.keys(data).length > 0}
       >
