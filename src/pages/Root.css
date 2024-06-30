@@ -1,0 +1,22 @@
+#app-container {
+  display: flex;
+  height: 100vh;
+}
+
+.app-sidebar {
+  padding: 8px;
+}
+.app-sidebar,
+.app-sidebar > div {
+  display: flex;
+  flex-direction: column;
+}
+
+.app-content {
+  flex: 1;
+  padding: 8px;
+  background-color: var(--background-body);
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+}

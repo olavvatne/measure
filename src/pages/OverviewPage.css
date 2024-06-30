@@ -1,1 +1,9 @@
-
+.table-pagination {
+  border-top: 1px solid var(--border);
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  padding: 5px;
+  background-color: var(--background-body);
+}
