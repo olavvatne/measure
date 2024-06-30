@@ -1,13 +1,6 @@
 import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { createMeasureTable } from "../components/table";
-import {
-  DarkModeButton,
-  ExportButton,
-  LoadProjectButton,
-  ReadFolderButton,
-  SaveProjectButton,
-} from "../components/toolbar";
 import { store } from "../store.js";
 import "./OverviewPage.css";
 
@@ -44,20 +37,9 @@ export default function OverviewPage() {
 
   const [tableView, tableControls] = createMeasureTable(data, onRowClick);
   return (
-    <div>
-      <div className="top-bar">
-        <div>
-          <ReadFolderButton />
-          <ExportButton data={state.images} />
-        </div>
-        <DarkModeButton />
-        <div>
-          <SaveProjectButton />
-          <LoadProjectButton />
-        </div>
-      </div>
+    <>
       {tableView}
       {tableControls}
-    </div>
+    </>
   );
 }
