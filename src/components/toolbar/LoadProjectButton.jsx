@@ -14,6 +14,9 @@ export default function LoadProjectButton() {
 
   async function onLoadAppData() {
     const jsonData = await window.fileApi.loadJson();
+    if (jsonData == null) {
+      return;
+    }
     const data = hydrateState(jsonData);
     dispatch({ type: "HydrateAction", data });
   }
