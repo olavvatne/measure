@@ -17,6 +17,7 @@ export default function ExportButton({ data }) {
         disabled={!Object.keys(data).length > 0}
       >
         <Export size={ICON_SIZE} />
+        Export
       </button>
       <div id="export-dropdown" className="dropdown-content">
         <a onClick={() => exportToCsv(data)}>Export to csv</a>

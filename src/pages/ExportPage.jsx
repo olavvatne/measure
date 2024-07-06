@@ -14,9 +14,20 @@ export default function OverviewPage() {
   }
 
   return (
-    <div style={{ display: "flex" }}>
-      <SaveProjectButton />
-      <ExportButton data={state.images} />
+    <div className="export-page-container">
+      <div>
+        <p>
+          Save project to a json file. You can continue adding measurements by
+          opening saved file at a later point.
+        </p>
+        <SaveProjectButton />
+        <p>
+          Export all measurements to csv file or open a csv file with a
+          timestamps column to do a best effort measurements to csv row
+          timestamp matching.
+        </p>
+        <ExportButton data={state.images} />
+      </div>
     </div>
   );
 }

@@ -18,6 +18,7 @@ export default function SaveProjectButton() {
       onClick={() => window.fileApi.storeJson(persistState(state))}
     >
       <DownloadSimple size={ICON_SIZE} />
+      Save project
     </button>
   );
 }
