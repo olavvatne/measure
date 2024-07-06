@@ -23,18 +23,25 @@ export function exportToCsv(rows) {
 }
 
 export async function matchAndExportToCsv(rows) {
-  const [fileHandle] = await window.showOpenFilePicker({
-    types: [
-      {
-        description: "csv",
-        accept: {
-          "csv/*": [".csv"],
+  let fileHandle;
+  try {
+    const [handle] = await window.showOpenFilePicker({
+      types: [
+        {
+          description: "csv",
+          accept: {
+            "csv/*": [".csv"],
+          },
         },
-      },
-    ],
-    excludeAcceptAllOption: true,
-    multiple: false,
-  });
+      ],
+      excludeAcceptAllOption: true,
+      multiple: false,
+    });
+    fileHandle = handle;
+  } catch (error) {
+    return;
+  }
+
   const file = await fileHandle.getFile();
 
   const data = Object.values(rows)

@@ -11,10 +11,10 @@ export default function OverviewPage() {
 
   let navigate = useNavigate();
 
-  console.log(state.images);
   if (Object.keys(state.images).length === 0) {
     return <NoProjectLoaded />;
   }
+
   const data = React.useMemo(() => {
     let og = Object.values(state.historicMeasurer.og);
     let ow = Object.values(state.historicMeasurer.ow);
