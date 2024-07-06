@@ -60,8 +60,13 @@
 }
 
 button {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
   border-radius: 8px;
-  padding: 10px 16px;
+  padding: 14px 18px;
   margin: 0;
 }
 

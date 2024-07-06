@@ -25,6 +25,7 @@ export default function LoadProjectButton() {
       onClick={onLoadAppData}
     >
       <UploadSimple size={ICON_SIZE} />
+      Load project
     </button>
   );
 }
