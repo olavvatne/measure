@@ -14,7 +14,11 @@ export default function BarButton({ path, children, tooltip }) {
   });
 
   return (
-    <button title={tooltip} onClick={() => navigate(path)} className={active}>
+    <button
+      title={tooltip}
+      onMouseDown={() => navigate(path)}
+      className={active}
+    >
       {childrenWithProps}
     </button>
   );
