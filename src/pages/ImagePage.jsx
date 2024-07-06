@@ -158,7 +158,7 @@ export default function ImagePage() {
         <button title={menuTooltip} className={buttonStyle} onClick={overview}>
           <Rows size={ICON_SIZE} />
         </button>
-        <div>
+        <div style={{ display: "flex" }}>
           <button
             title={viewTooltip}
             className={imageMode ? "active" : ""}

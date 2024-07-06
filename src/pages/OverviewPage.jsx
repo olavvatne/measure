@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { createMeasureTable } from "../components/table";
 import { store } from "../store.js";
 import "./OverviewPage.css";
+import { NoProjectLoaded } from "../components/redirect";
 
 export default function OverviewPage() {
   const globalState = useContext(store);
@@ -10,6 +11,10 @@ export default function OverviewPage() {
 
   let navigate = useNavigate();
 
+  console.log(state.images);
+  if (Object.keys(state.images).length === 0) {
+    return <NoProjectLoaded />;
+  }
   const data = React.useMemo(() => {
     let og = Object.values(state.historicMeasurer.og);
     let ow = Object.values(state.historicMeasurer.ow);
@@ -37,9 +42,9 @@ export default function OverviewPage() {
 
   const [tableView, tableControls] = createMeasureTable(data, onRowClick);
   return (
-    <>
+    <div>
       {tableView}
       {tableControls}
-    </>
+    </div>
   );
 }

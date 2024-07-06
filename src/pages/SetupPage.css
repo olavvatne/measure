@@ -1,0 +1,17 @@
+.setup-page-container {
+  display: flex;
+  flex: 0.75;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.setup-page-container > div {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  max-width: 25rem;
+}
+.setup-page-container > div > p {
+  grid-column: 1 / -1;
+}

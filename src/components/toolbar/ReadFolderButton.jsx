@@ -49,20 +49,22 @@ export default function ReadFolderButton() {
     <button
       title={!isFileAccessSupport ? notSupportedTooltip : imageTooltip}
       disabled={isLoading || !isFileAccessSupport}
-      style={{ position: "relative" }}
       onClick={() => readFolder()}
     >
-      {isLoading ? <div className="loader"></div> : null}
-      {!isFileAccessSupport ? (
-        <Warning
-          weight="fill"
-          opacity={1}
-          size={ICON_SIZE * 0.8}
-          style={{ position: "absolute" }}
-          color="yellow"
-        />
-      ) : null}
-      <Image size={ICON_SIZE} opacity={isLoading ? 0.2 : 1.0} />
+      <div style={{ position: "relative" }}>
+        {isLoading ? <div className="loader"></div> : null}
+        {!isFileAccessSupport ? (
+          <Warning
+            weight="fill"
+            opacity={1}
+            size={ICON_SIZE * 0.8}
+            style={{ position: "absolute" }}
+            color="yellow"
+          />
+        ) : null}
+        <Image size={ICON_SIZE} opacity={isLoading ? 0.2 : 1.0} />
+      </div>
+      Read folder
     </button>
   );
 }
