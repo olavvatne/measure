@@ -1,0 +1,19 @@
+.export-page-container {
+  display: flex;
+  flex: 0.75;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.export-page-container > div {
+  display: grid;
+  grid-template-columns: 1fr max-content;
+  gap: 10px 20px;
+  max-width: 40rem;
+}
+
+.export-page-container > div > button {
+  align-self: flex-start;
+  margin-top: 15px;
+}
