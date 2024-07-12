@@ -37,8 +37,8 @@ export default function ImagePage() {
     ow: image.values?.ow,
   });
   const [measure, setMeasure] = useState({
-    og: state?.currentMeasurer.og,
-    ow: state?.currentMeasurer.ow,
+    og: state?.measurements.current.og,
+    ow: state?.measurements.current.ow,
   });
 
   useEffect(() => {
@@ -68,10 +68,10 @@ export default function ImagePage() {
 
   useEffect(() => {
     setMeasure({
-      og: state?.currentMeasurer.og,
-      ow: state?.currentMeasurer.ow,
+      og: state?.measurements.current.og,
+      ow: state?.measurements.current.ow,
     });
-  }, [image.id, JSON.stringify(state.currentMeasurer)]);
+  }, [image.id, JSON.stringify(state.measurements.current)]);
 
   useEffect(() => {
     setFluidValues({ og: image.values?.og, ow: image.values?.ow });
