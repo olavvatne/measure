@@ -1,37 +1,50 @@
 import React, { createContext, useReducer } from "react";
 
 const initialState = {
-  version: 1,
+  version: 2,
   images: {},
-  currentMeasurer: {
-    og: null,
-    ow: null,
+  general: {
+    name: "",
   },
-  historicMeasurer: {
-    og: {
-      0: {
-        fromDate: 0,
-        offsetWidth: 200,
-        offsetHeight: 100,
-        x: 20,
-        y: 100,
-        minValue: 1,
-        maxValue: 18,
-        minLocation: null,
-        maxLocation: null,
+  measurements: {
+    setup: {
+      og: {
+        id: "og",
+        color: "red",
+        name: "O/G",
+      },
+      ow: {
+        id: "ow",
+        color: "blue",
+        name: "O/W",
       },
     },
-    ow: {
-      0: {
-        fromDate: 0,
-        x: 320,
-        y: 100,
-        offsetWidth: 200,
-        offsetHeight: 100,
-        minValue: 1,
-        maxValue: 18,
-        minLocation: null,
-        maxLocation: null,
+    current: {
+      og: null,
+      ow: null,
+    },
+    history: {
+      og: {
+        0: {
+          fromDate: 0,
+          offsetWidth: 200,
+          offsetHeight: 100,
+          x: 20,
+          y: 100,
+          minValue: 1,
+          maxValue: 18,
+        },
+      },
+      ow: {
+        0: {
+          fromDate: 0,
+          x: 320,
+          y: 100,
+          offsetWidth: 200,
+          offsetHeight: 100,
+          minValue: 1,
+          maxValue: 18,
+        },
       },
     },
   },
@@ -62,10 +75,10 @@ const StateProvider = ({ children }) => {
         return newState;
       case "SetCurrentMeasurerAction": {
         const dateUnix = action.data.dateUnix;
-        const measurers = Object.keys(state.historicMeasurer);
+        const measurers = Object.keys(state.measurements.history);
         const newCurrent = {};
         for (let i = 0; i < measurers.length; i++) {
-          const m = Object.values(state.historicMeasurer[measurers[i]]);
+          const m = Object.values(state.measurements.history[measurers[i]]);
           const closestMatch = m.reduce(function (prev, current) {
             const prevDiff = dateUnix - prev.fromDate;
             const currentDiff = dateUnix - current.fromDate;
@@ -77,7 +90,10 @@ const StateProvider = ({ children }) => {
           });
           newCurrent[measurers[i]] = closestMatch;
         }
-        newState = { ...state, currentMeasurer: newCurrent };
+        newState = {
+          ...state,
+          measurements: { ...state.measurements, current: newCurrent },
+        };
         return newState;
       }
       case "NewMeasureValuesAction": {
@@ -88,7 +104,7 @@ const StateProvider = ({ children }) => {
           const k = measureKeys[i];
           const d = action.data[k];
 
-          const current = state.currentMeasurer[k];
+          const current = state.measurements.current[k];
           const dateUnix = d.dateUnix;
           const newValues = d.values;
           if (!current || !newValues) {
@@ -131,13 +147,16 @@ const StateProvider = ({ children }) => {
           }
           newState = {
             ...newState,
-            historicMeasurer: {
-              ...newState.historicMeasurer,
-              [d.name]: {
-                ...newState.historicMeasurer[d.name],
-                [dateUnix + ""]: {
-                  ...newValues,
-                  fromDate: dateUnix,
+            measurements: {
+              ...newState.measurements,
+              history: {
+                ...newState.measurements.history,
+                [d.name]: {
+                  ...newState.measurements.history[d.name],
+                  [dateUnix + ""]: {
+                    ...newValues,
+                    fromDate: dateUnix,
+                  },
                 },
               },
             },

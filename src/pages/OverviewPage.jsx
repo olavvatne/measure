@@ -16,8 +16,8 @@ export default function OverviewPage() {
   }
 
   const data = React.useMemo(() => {
-    let og = Object.values(state.historicMeasurer.og);
-    let ow = Object.values(state.historicMeasurer.ow);
+    let og = Object.values(state.measurements.history.og);
+    let ow = Object.values(state.measurements.history.ow);
     og = og
       .filter((m) => m.fromDate > 0)
       .map((m) => {
