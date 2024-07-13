@@ -1,0 +1,22 @@
+.measurements-setup {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.measurements-setup > li {
+  display: flex;
+  flex: 1;
+  justify-content: space-between;
+  /* align-items: center; */
+  flex-direction: row;
+  gap: 10px;
+}
+
+.measurements-setup input[type="color"] {
+  height: 41px;
+}
+
+.measurements-setup button {
+  background-color: unset;
+}

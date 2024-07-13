@@ -9,6 +9,8 @@ export default function OverviewPage() {
   const globalState = useContext(store);
   const { state } = globalState;
 
+  const dataColumns = Object.values(state.measurements.setup);
+
   let navigate = useNavigate();
 
   if (Object.keys(state.images).length === 0) {
@@ -16,21 +18,21 @@ export default function OverviewPage() {
   }
 
   const data = React.useMemo(() => {
-    let og = Object.values(state.measurements.history.og);
-    let ow = Object.values(state.measurements.history.ow);
-    og = og
-      .filter((m) => m.fromDate > 0)
-      .map((m) => {
-        m.id = "og";
-        return m;
-      });
-    ow = ow
-      .filter((m) => m.fromDate > 0)
-      .map((m) => {
-        m.id = "ow";
-        return m;
-      });
-    return [...og, ...ow, ...Object.values(state.images)];
+    let measurementHistoryData = [];
+    for (const dc of dataColumns) {
+      if (!state.measurements.history[dc.id]) {
+        continue;
+      }
+      const values = Object.values(state.measurements.history[dc.id])
+        .filter((m) => m.fromDate > 0)
+        .map((m) => {
+          m.id = dc.id;
+          m.color = dc.color;
+          return m;
+        });
+      measurementHistoryData = measurementHistoryData.concat(values);
+    }
+    return [...measurementHistoryData, ...Object.values(state.images)];
   }, [state.images]);
 
   function onRowClick(row) {
@@ -40,7 +42,11 @@ export default function OverviewPage() {
     navigate("/image/" + row.original.id);
   }
 
-  const [tableView, tableControls] = createMeasureTable(data, onRowClick);
+  const [tableView, tableControls] = createMeasureTable(
+    data,
+    dataColumns,
+    onRowClick
+  );
   return (
     <div>
       {tableView}

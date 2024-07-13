@@ -11,13 +11,21 @@ import {
   createColumnHelper,
 } from "@tanstack/react-table";
 
-export default function createMeasureTable(data, onRowClick) {
+export default function createMeasureTable(data, dataColumns, onRowClick) {
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 20,
   });
 
   const columnHelper = createColumnHelper();
+  const dataColumnAccessors = dataColumns.map((dc) =>
+    columnHelper.accessor((row) => row.values?.[dc.id], {
+      id: dc.id,
+      size: 60,
+      cell: (info) => info.getValue()?.toFixed(3),
+      header: () => <span>{dc.name}</span>,
+    })
+  );
   const columns = [
     columnHelper.accessor((row) => row.date || row.fromDate, {
       id: "date",
@@ -25,18 +33,7 @@ export default function createMeasureTable(data, onRowClick) {
       cell: (info) => dayjs.unix(info.getValue()).format("YYYY-MM-DD HH:mm:ss"),
       header: () => <span>Date</span>,
     }),
-    columnHelper.accessor((row) => row.values?.og, {
-      id: "og",
-      size: 60,
-      cell: (info) => info.getValue()?.toFixed(3),
-      header: () => <span>O/G</span>,
-    }),
-    columnHelper.accessor((row) => row.values?.ow, {
-      id: "ow",
-      size: 60,
-      cell: (info) => info.getValue()?.toFixed(3),
-      header: () => <span>O/W</span>,
-    }),
+    ...dataColumnAccessors,
     columnHelper.accessor((row) => row.path, {
       id: "path",
       cell: (info) => info.getValue(),

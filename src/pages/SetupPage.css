@@ -15,3 +15,7 @@
 .setup-page-container > div > p {
   grid-column: 1 / -1;
 }
+
+.setup-page-container > div > .measurements-setup {
+  grid-column: 1 / -1;
+}
