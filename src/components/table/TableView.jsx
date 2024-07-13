@@ -4,6 +4,7 @@ import { flexRender } from "@tanstack/react-table";
 import "./TableView.css";
 
 export default function TableView({ onRowClick, table }) {
+  const totalColumns = table.getAllColumns().length;
   return (
     <table className="overview-table">
       <thead>
@@ -79,7 +80,11 @@ export default function TableView({ onRowClick, table }) {
                   </td>
                 ))
             ) : (
-              <td colSpan="5" className={"calibration-td " + row.original.id}>
+              <td
+                colSpan={totalColumns}
+                className="calibration-td"
+                style={{ backgroundColor: row.original.color }}
+              >
                 <span>{row.original.id}</span>
                 <span>Min: {row.original.minValue}</span>
                 <span>Max: {row.original.maxValue}</span>

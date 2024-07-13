@@ -10,12 +10,12 @@ const initialState = {
     setup: {
       og: {
         id: "og",
-        color: "red",
+        color: "#FF0000",
         name: "O/G",
       },
       ow: {
         id: "ow",
-        color: "blue",
+        color: "#0000FF",
         name: "O/W",
       },
     },
@@ -61,6 +61,22 @@ const StateProvider = ({ children }) => {
   const [state, dispatch] = useReducer((state, action) => {
     let newState = null;
     switch (action.type) {
+      case "MeasurementSetupChangeAction":
+        const { id, key, value } = action.data;
+        newState = {
+          ...state,
+          measurements: {
+            ...state.measurements,
+            setup: {
+              ...state.measurements.setup,
+              [id]: {
+                ...state.measurements.setup[id],
+                [key]: value,
+              },
+            },
+          },
+        };
+        return newState;
       case "ViewChangeAction":
         newState = { ...state, view: action.data };
         return newState;

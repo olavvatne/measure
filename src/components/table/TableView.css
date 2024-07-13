@@ -50,10 +50,7 @@ th,
   margin: 0 0.5rem;
 }
 
-.calibration-td.og {
-  background-color: var(--og-background);
-}
-
-.calibration-td.ow {
-  background-color: var(--ow-background);
+.calibration-td {
+  background-color: var(--background-alt);
+  color: white;
 }
