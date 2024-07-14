@@ -16,15 +16,16 @@
 }
 
 .image-toolbar .controls {
-  min-width: 100px;
+  min-width: 120px;
   display: flex;
+  justify-content: flex-end;
 }
 
-.image-toolbar .controls .controls-next {
+.controls:has(> button:nth-of-type(2)) > button:last-child {
   border-radius: 0 8px 8px 0;
   margin-left: auto;
 }
-.image-toolbar .controls .controls-prev {
+.controls:has(> button:nth-of-type(2)) > button:first-child {
   border-radius: 8px 0 0 8px;
   margin-right: auto;
 }
@@ -50,18 +51,3 @@ div#zoom > img {
   height: auto;
 }
 
-.date-area {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  position: fixed;
-  margin: 20px;
-  padding: 5px;
-  bottom: 0;
-  right: 0;
-  font-size: 1.4em;
-  text-align: right;
-  z-index: 1000;
-  background-color: var(--background-body);
-  opacity: 0.5;
-}

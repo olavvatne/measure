@@ -1,17 +1,9 @@
-.red .moveable-control {
-  background: red !important;
+.moveable-control {
+  background: var(--able-color) !important;
 }
 
-.red .moveable-line {
-  background: red !important;
-}
-
-.blue .moveable-control {
-  background: blue !important;
-}
-
-.blue .moveable-line {
-  background: blue !important;
+.moveable-line {
+  background: var(--able-color) !important;
 }
 
 .target {
