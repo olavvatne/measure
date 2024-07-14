@@ -1,0 +1,17 @@
+.image-autosave {
+  display: flex;
+  position: fixed;
+  gap: 10px;
+  margin: 20px;
+  padding: 5px;
+  bottom: 0;
+  left: 0;
+  font-size: 1.4em;
+  text-align: right;
+  z-index: 1000;
+  opacity: 0.5;
+}
+
+.image-autosave .loader {
+  position: unset;
+}

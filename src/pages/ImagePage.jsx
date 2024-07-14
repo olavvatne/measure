@@ -5,12 +5,18 @@ import {
   MagnifyingGlass,
   Rows,
 } from "@phosphor-icons/react";
-import * as dayjs from "dayjs";
-import React, { useContext, useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { ImageMoverArea } from "../components/ImageMoverArea.jsx";
-import { MovableFluidArea } from "../components/MovableFluidArea.jsx";
+import React, { useCallback, useContext, useEffect, useState } from "react";
+import { useLoaderData } from "react-router-dom";
+import {
+  ImageAutoSave,
+  ImageMoverArea,
+  ImageNavigateButton,
+  ImageTimestamp,
+  MeasurementImage,
+  MovableLineMeasureArea,
+} from "../components/editor";
 import { store } from "../store.js";
+import { debounce } from "../utils/debounce.js";
 import { useKeypress } from "../utils/KeypressHook.jsx";
 import "./ImagePage.css";
 
@@ -25,57 +31,66 @@ const lockTooltip = "Lock mode disabled movement of widgets";
 const ICON_SIZE = 24;
 
 export default function ImagePage() {
-  let { guid } = useParams();
+  const { record, areas } = useLoaderData();
   const globalState = useContext(store);
   const { dispatch, state } = globalState;
-  let navigate = useNavigate();
-  const image = state.images[guid] || {};
   const [imageMode, setImageMode] = useState(false);
   const [lockMode, setLockMode] = useState(false);
-  const [fluidValues, setFluidValues] = useState({
-    og: image.values?.og,
-    ow: image.values?.ow,
+  const [isAutoSaving, setIsAutoSaving] = useState(false);
+  const [data, setData] = useState({
+    record: record,
+    isDirty: false,
+    measurements: record?.values,
+    boundaryAreas: areas,
   });
-  const [measure, setMeasure] = useState({
-    og: state?.measurements.current.og,
-    ow: state?.measurements.current.ow,
-  });
 
-  useEffect(() => {
-    if (!window.imageApi.getImage) return;
-
-    const dateUnix = image.date;
-    dispatch({ type: "SetCurrentMeasurerAction", data: { dateUnix } });
-    window.imageApi.getImage(image.path).then((content) => {
-      const url = URL.createObjectURL(
-        new Blob([content.buffer], { type: "image/png" })
-      );
-      const img = document.getElementById("image-container");
-      const rotate = true;
-      if (rotate) {
-        img.style.transform = "rotate(90deg) translatex(-50%)";
-      }
-      img.src = url;
-      if (!window.firstWidth) {
-        window.firstWidth = window.innerWidth;
-      }
-      img.style.width = window.firstWidth + "px";
-      img.onload = () => {
-        URL.revokeObjectURL(url);
-      };
+  const saveData = useCallback((data) => {
+    console.log("auto-save");
+    dispatch({
+      type: "RecordMeasurementsAction",
+      data: {
+        imageId: data.record.id,
+        measurements: data.measurements,
+      },
     });
-  }, [image?.path]);
+    if (!data.boundaryAreas) {
+      return;
+    }
+    for (const mid of Object.keys(data.boundaryAreas)) {
+      if (
+        JSON.stringify(data.boundaryAreas[mid]) === JSON.stringify(areas[mid])
+      ) {
+        continue;
+      }
+      dispatch({
+        type: "ChangeBoundaryAreaAction",
+        data: {
+          measurementId: mid,
+          boundaryArea: data.boundaryAreas[mid],
+          dateUnix: data.record.date,
+        },
+      });
+      setIsAutoSaving(false);
+    }
+  }, []);
+
+  const debouncedSaveData = useCallback(debounce(saveData, 100), [saveData]);
 
   useEffect(() => {
-    setMeasure({
-      og: state?.measurements.current.og,
-      ow: state?.measurements.current.ow,
+    if (data.isDirty) {
+      setIsAutoSaving(true);
+      debouncedSaveData(data);
+    }
+  }, [data, debouncedSaveData]);
+
+  useEffect(() => {
+    setData({
+      record: record,
+      measurements: record?.values,
+      boundaryAreas: areas,
+      isDirty: false,
     });
-  }, [image.id, JSON.stringify(state.measurements.current)]);
-
-  useEffect(() => {
-    setFluidValues({ og: image.values?.og, ow: image.values?.ow });
-  }, [image.id, JSON.stringify(state.images[guid])]);
+  }, [record.id]);
 
   useKeypress(
     "q",
@@ -93,71 +108,12 @@ export default function ImagePage() {
     [lockMode]
   );
 
-  useKeypress(
-    "ArrowRight",
-    () => {
-      next();
-    },
-    [image.id, image, measure, fluidValues]
-  );
-
-  useKeypress(
-    "ArrowLeft",
-    function () {
-      prev();
-    },
-    [image.id, image, measure, fluidValues]
-  );
-
-  function navigateTo(navUrl) {
-    const mv = measure;
-    const fv = fluidValues;
-    const ci = image;
-
-    const ogData = {
-      dateUnix: ci.date,
-      name: "og",
-      values: mv.og,
-      id: ci.id,
-      recordedValues: fv,
-    };
-    const owData = {
-      dateUnix: ci.date,
-      name: "ow",
-      values: mv.ow,
-      id: ci.id,
-      recordedValues: fv,
-    };
-    const data = { og: ogData, ow: owData };
-    if (ogData.dateUnix || owData.dateUnix) {
-      dispatch({ type: "NewMeasureValuesAction", data });
-    }
-
-    navigate(navUrl);
-  }
-
-  function next() {
-    if (image.nextId) {
-      navigateTo("/image/" + image.nextId);
-    }
-  }
-
-  function prev() {
-    if (image.prevId) {
-      navigateTo("/image/" + image.prevId);
-    }
-  }
-
-  function overview() {
-    navigateTo("/overview");
-  }
-  const buttonStyle = "";
   return (
     <div className="image-container">
       <div className="image-toolbar">
-        <button title={menuTooltip} className={buttonStyle} onClick={overview}>
+        <ImageNavigateButton path={"/overview"} tooltip={menuTooltip}>
           <Rows size={ICON_SIZE} />
-        </button>
+        </ImageNavigateButton>
         <div style={{ display: "flex" }}>
           <button
             title={viewTooltip}
@@ -175,67 +131,61 @@ export default function ImagePage() {
           </button>
         </div>
         <div className="controls">
-          {image.prevId ? (
-            <button
-              title={previousTooltip}
-              className={"controls-prev " + buttonStyle}
-              onClick={prev}
+          {record?.prevId ? (
+            <ImageNavigateButton
+              path={"/image/" + record.prevId}
+              tooltip={previousTooltip}
+              hotkey="ArrowLeft"
             >
               <ArrowLeft size={ICON_SIZE} />
-            </button>
+            </ImageNavigateButton>
           ) : null}
-          {image.nextId ? (
-            <button
-              title={nextTooltip}
-              className={"controls-next " + buttonStyle}
-              onClick={next}
+          {record?.nextId ? (
+            <ImageNavigateButton
+              path={"/image/" + record.nextId}
+              tooltip={nextTooltip}
+              hotkey="ArrowRight"
             >
               <ArrowRight size={ICON_SIZE} />
-            </button>
+            </ImageNavigateButton>
           ) : null}
         </div>
-        <div className="date-area">
-          {dayjs.unix(image.date).format("YYYY-MM-DD HH:mm:ss")}
-        </div>
       </div>
+      <ImageTimestamp imageDate={record.date} />
+      <ImageAutoSave isAutoSaving={isAutoSaving} />
       <ImageMoverArea imageMode={imageMode}>
-        <MovableFluidArea
-          key={
-            JSON.stringify(measure.og) +
-            JSON.stringify(fluidValues.og || null) +
-            image.id +
-            "og"
-          }
-          imageId={image.id}
-          name="og"
-          displayName="O/G"
-          color="red"
-          position="left"
-          disabled={imageMode || lockMode}
-          value={fluidValues.og}
-          setValue={(v) => setFluidValues({ og: v, ow: fluidValues.ow })}
-          measureValues={measure.og}
-          setMeasureValues={(v) => setMeasure({ og: v, ow: measure.ow })}
-        ></MovableFluidArea>
-        <MovableFluidArea
-          key={
-            JSON.stringify(measure.ow) +
-            JSON.stringify(fluidValues.ow || null) +
-            image.id +
-            "ow"
-          }
-          imageId={image.id}
-          name="ow"
-          displayName="O/W"
-          color="blue"
-          position="right"
-          disabled={imageMode || lockMode}
-          value={fluidValues.ow}
-          setValue={(v) => setFluidValues({ ow: v, og: fluidValues.og })}
-          measureValues={measure.ow}
-          setMeasureValues={(v) => setMeasure({ ow: v, og: measure.og })}
-        ></MovableFluidArea>
-        <img id="image-container"></img>
+        {Object.values(state.measurements.setup).map((x) => (
+          <MovableLineMeasureArea
+            key={
+              JSON.stringify(data.boundaryAreas?.[x.id]) +
+              JSON.stringify(data.measurements?.[x.id] || null) +
+              record.id +
+              [x.id]
+            }
+            imageId={record.id}
+            name={x.id}
+            displayName={x.name}
+            color={x.color}
+            disabled={imageMode || lockMode}
+            value={data.measurements?.[x.id]}
+            setValue={(v) =>
+              setData({
+                ...data,
+                isDirty: true,
+                measurements: { ...data.measurements, [x.id]: v },
+              })
+            }
+            measureValues={data.boundaryAreas?.[x.id]}
+            setMeasureValues={(v) =>
+              setData({
+                ...data,
+                isDirty: true,
+                boundaryAreas: { ...data.boundaryAreas, [x.id]: v },
+              })
+            }
+          />
+        ))}
+        <MeasurementImage imagePath={record.path} />
       </ImageMoverArea>
     </div>
   );

@@ -1,0 +1,12 @@
+.image-timestamp {
+  position: fixed;
+  margin: 20px;
+  padding: 5px;
+  bottom: 0;
+  right: 0;
+  font-size: 1.4em;
+  text-align: right;
+  z-index: 1000;
+  background-color: var(--background-body);
+  opacity: 0.5;
+}

@@ -19,10 +19,6 @@ const initialState = {
         name: "O/W",
       },
     },
-    current: {
-      og: null,
-      ow: null,
-    },
     history: {
       og: {
         0: {
@@ -89,105 +85,86 @@ const StateProvider = ({ children }) => {
       case "ImagesChangeAction":
         newState = { ...state, images: action.data };
         return newState;
-      case "SetCurrentMeasurerAction": {
-        const dateUnix = action.data.dateUnix;
-        const measurers = Object.keys(state.measurements.history);
-        const newCurrent = {};
-        for (let i = 0; i < measurers.length; i++) {
-          const m = Object.values(state.measurements.history[measurers[i]]);
-          const closestMatch = m.reduce(function (prev, current) {
-            const prevDiff = dateUnix - prev.fromDate;
-            const currentDiff = dateUnix - current.fromDate;
-            if (currentDiff < 0) {
-              return prev;
-            }
-
-            return prevDiff > currentDiff ? current : prev;
-          });
-          newCurrent[measurers[i]] = closestMatch;
-        }
-        newState = {
-          ...state,
-          measurements: { ...state.measurements, current: newCurrent },
-        };
-        return newState;
-      }
-      case "NewMeasureValuesAction": {
-        const measureKeys = Object.keys(action.data);
-        let newState = { ...state };
-
-        for (let i = 0; i < measureKeys.length; i++) {
-          const k = measureKeys[i];
-          const d = action.data[k];
-
-          const current = state.measurements.current[k];
-          const dateUnix = d.dateUnix;
-          const newValues = d.values;
-          if (!current || !newValues) {
-            continue;
-            // return {...state};
-          }
-
-          let union = new Set([
-            ...Object.keys(newValues),
-            ...Object.keys(current),
-          ]);
-          union.delete("fromDate");
-          union.delete("value");
-          union.delete("id");
-          // union = union.filter(x => x !== "fromDate");
-          const uniqueKeys = [...union];
-          let isEqual = true;
-          for (let i = 0; i < uniqueKeys.length; i++) {
-            if (newValues[uniqueKeys[i]] !== current[uniqueKeys[i]]) {
-              isEqual = false;
-              break;
-            }
-          }
-          newValues.type = "calibration";
-
-          const newImages = {
-            ...newState.images,
-            [d.id]: {
-              ...newState.images[d.id],
-              values: {
-                ...newState.images[d.id].values,
-                [d.name]: d.recordedValues[d.name],
-              },
+      case "RecordMeasurementsAction": {
+        const { imageId, measurements } = action.data;
+        const newImages = {
+          ...state.images,
+          [imageId]: {
+            ...state.images[imageId],
+            values: {
+              ...state.images[imageId]?.values,
+              ...measurements,
             },
-          };
-
-          if (isEqual) {
-            newState = { ...newState, images: newImages };
-            continue;
-          }
-          newState = {
-            ...newState,
-            measurements: {
-              ...newState.measurements,
-              history: {
-                ...newState.measurements.history,
-                [d.name]: {
-                  ...newState.measurements.history[d.name],
-                  [dateUnix + ""]: {
-                    ...newValues,
-                    fromDate: dateUnix,
-                  },
+          },
+        };
+        return { ...state, images: newImages };
+      }
+      case "ChangeBoundaryAreaAction": {
+        const { measurementId, boundaryArea, dateUnix } = action.data;
+        boundaryArea.type = "calibration";
+        return {
+          ...state,
+          measurements: {
+            ...state.measurements,
+            history: {
+              ...state.measurements.history,
+              [measurementId]: {
+                ...state.measurements.history[measurementId],
+                [dateUnix + ""]: {
+                  ...boundaryArea,
+                  fromDate: dateUnix,
                 },
               },
             },
-            images: newImages,
-          };
-        }
-        return newState;
+          },
+        };
       }
-
       default:
         throw new Error();
     }
   }, initialState);
 
-  return <Provider value={{ state, dispatch }}>{children}</Provider>;
+  function getCurrentBoundaryArea(id, dateUnix) {
+    if (dateUnix === undefined) {
+      throw Error("unix time not provided");
+    }
+
+    if (!state.measurements.setup[id]) {
+      throw Error(`Measurement with id ${id} does not exist`);
+    }
+    const closestMatch = Object.values(state.measurements.history[id]).reduce(
+      function (prev, current) {
+        const prevDiff = dateUnix - prev.fromDate;
+        const currentDiff = dateUnix - current.fromDate;
+        if (currentDiff < 0) {
+          return prev;
+        }
+        return prevDiff > currentDiff ? current : prev;
+      }
+    );
+    return closestMatch;
+  }
+
+  function getCurrentBoundaryAreas(dateUnix) {
+    const boundaries = {};
+    for (const measureId of Object.keys(state.measurements.setup)) {
+      boundaries[measureId] = getCurrentBoundaryArea(measureId, dateUnix);
+    }
+    return boundaries;
+  }
+
+  return (
+    <Provider
+      value={{
+        state,
+        dispatch,
+        getCurrentBoundaryArea,
+        getCurrentBoundaryAreas,
+      }}
+    >
+      {children}
+    </Provider>
+  );
 };
 
 export { store, StateProvider };
