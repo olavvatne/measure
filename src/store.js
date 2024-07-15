@@ -79,9 +79,6 @@ const StateProvider = ({ children }) => {
       case "HydrateAction":
         newState = action.data;
         return newState;
-      case "TableChangeAction":
-        newState = { ...state, table: { ...state.table, ...action.data } };
-        return newState;
       case "ImagesChangeAction":
         newState = { ...state, images: action.data };
         return newState;
