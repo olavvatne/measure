@@ -17,6 +17,7 @@ import ImageAccessApi from "./utils/image-access";
 import JsonAccessApi from "./utils/json-access";
 import { isElectron } from "./utils/platform-util";
 import { NoImageWithId } from "./components/redirect";
+import { ViewProvider } from "./state/ViewContext.js";
 
 let createRouter = createHashRouter;
 if (!isElectron()) {
@@ -74,7 +75,9 @@ const container = document.getElementById("app-container");
 createRoot(container).render(
   // <StrictMode>
   <StateProvider>
-    <AppRoot />
+    <ViewProvider>
+      <AppRoot />
+    </ViewProvider>
   </StateProvider>
   // </StrictMode>
 );
