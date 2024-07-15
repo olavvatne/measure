@@ -71,12 +71,21 @@ const EdgeClickable = {
               className="edge-line"
               style={{
                 width: "1px",
+                pointerEvents: "none",
                 height: rect.offsetHeight,
                 left: pos,
                 position: "relative",
               }}
             >
-              <label style={{ position: "relative", left: -30, top: "-80px" }}>
+              <label
+                style={{
+                  position: "relative",
+                  left: -30,
+                  top: "-80px",
+                  padding: "2px 4px",
+                  background: "var(--able-color)",
+                }}
+              >
                 {edgeValue ? edgeValue.toFixed(3) : null}
               </label>
             </div>
