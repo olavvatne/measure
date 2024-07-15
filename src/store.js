@@ -44,11 +44,6 @@ const initialState = {
       },
     },
   },
-  view: {
-    scale: 1,
-    pointX: 0,
-    pointY: 0,
-  },
 };
 const store = createContext(initialState);
 const { Provider } = store;
@@ -72,9 +67,6 @@ const StateProvider = ({ children }) => {
             },
           },
         };
-        return newState;
-      case "ViewChangeAction":
-        newState = { ...state, view: action.data };
         return newState;
       case "HydrateAction":
         newState = action.data;
