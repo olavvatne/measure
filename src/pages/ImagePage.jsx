@@ -175,8 +175,8 @@ export default function ImagePage() {
                 measurements: { ...data.measurements, [x.id]: v },
               })
             }
-            measureValues={data.boundaryAreas?.[x.id]}
-            setMeasureValues={(v) =>
+            boundaryArea={data.boundaryAreas?.[x.id]}
+            setBoundaryArea={(v) =>
               setData({
                 ...data,
                 isDirty: true,
