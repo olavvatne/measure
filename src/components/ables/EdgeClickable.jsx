@@ -12,9 +12,10 @@ function valueToPos(value, padding, width, valueLeft, valueRight) {
 const EdgeClickable = {
   name: "EdgeClickable",
   props: {
-    fluidEdge: Number,
+    measureEdge: Number,
     valueLeft: Number,
     valueRight: Number,
+    onMeasureEdge: Function,
   },
   events: {},
   render(moveable, React) {
@@ -23,13 +24,13 @@ const EdgeClickable = {
 
     const padding = Math.max(30, rect.offsetWidth * 0.05);
     const pos = valueToPos(
-      moveable.props.fluidEdge,
+      moveable.props.measureEdge,
       padding,
       rect.offsetWidth,
       moveable.props.valueLeft,
       moveable.props.valueRight
     );
-    const edgeValue = moveable.props.fluidEdge;
+    const edgeValue = moveable.props.measureEdge;
     const transform = `translate(${pos2[0]}px, ${pos2[1]}px) rotate(${
       rect.rotation
     }deg)  translate(${-rect.offsetWidth}px, 00px)`;
@@ -52,7 +53,7 @@ const EdgeClickable = {
       >
         <div
           style={{ width: rect.offsetWidth, height: rect.offsetHeight }}
-          onClick={moveable.props.onFluidEdge}
+          onClick={moveable.props.onMeasureEdge}
         >
           <div
             style={{

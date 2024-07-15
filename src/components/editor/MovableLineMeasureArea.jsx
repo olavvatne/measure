@@ -88,7 +88,7 @@ export default function MovableLineMeasureArea({
   const s = boundaryArea;
   const transform = `rotate(${s.rotation || 0}deg)`;
 
-  function onFluidEdge(e) {
+  function onMeasureEdge(e) {
     const padding = Math.max(30, e.target.offsetWidth * 0.05);
     const value = posToValue(
       e.nativeEvent.offsetX,
@@ -126,7 +126,7 @@ export default function MovableLineMeasureArea({
           LabelLeftViewable: true,
           LabelRightViewable: true,
           EdgeClickable: true,
-          fluidEdge: value,
+          measureEdge: value,
           displayName: displayName,
           valueLeft: boundaryArea.minValue,
           valueRight: boundaryArea.maxValue,
@@ -146,7 +146,7 @@ export default function MovableLineMeasureArea({
               });
             }
           },
-          onFluidEdge: onFluidEdge,
+          onMeasureEdge: onMeasureEdge,
         }}
         renderDirections={["n", "s", "w", "e"]}
         origin={false}
