@@ -20,8 +20,6 @@ function posToValue(pos, padding, width, valueLeft, valueRight) {
 
 const framer = new MoveableFrame();
 export default function MovableLineMeasureArea({
-  imageId = "",
-  name = "og",
   color = "red",
   displayName = "O/G",
   disabled = false,
@@ -115,8 +113,6 @@ export default function MovableLineMeasureArea({
         }}
       ></div>
       <Moveable
-        className={name}
-        key={imageId + name}
         ref={moveableRef}
         target={targetRef}
         ables={[
@@ -130,7 +126,6 @@ export default function MovableLineMeasureArea({
           LabelLeftViewable: true,
           LabelRightViewable: true,
           EdgeClickable: true,
-          name: name,
           fluidEdge: value,
           displayName: displayName,
           valueLeft: boundaryArea.minValue,
@@ -208,8 +203,6 @@ export default function MovableLineMeasureArea({
 }
 
 MovableLineMeasureArea.propTypes = {
-  name: PropTypes.string,
-  imageId: PropTypes.string,
   color: PropTypes.string,
   displayName: PropTypes.string,
   measureValues: PropTypes.object,
