@@ -12,7 +12,6 @@ function valueToPos(value, padding, width, valueLeft, valueRight) {
 const EdgeClickable = {
   name: "EdgeClickable",
   props: {
-    name: String,
     fluidEdge: Number,
     valueLeft: Number,
     valueRight: Number,
