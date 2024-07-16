@@ -1,9 +1,9 @@
-import PropTypes from "prop-types";
+import PropTypes, { instanceOf } from "prop-types";
 import React from "react";
 import { flexRender } from "@tanstack/react-table";
 import "./TableView.css";
 
-export default function TableView({ onRowClick, table }) {
+export default function TableView({ onRowClick, table, dataColumnsMap }) {
   const totalColumns = table.getAllColumns().length;
   return (
     <table className="overview-table">
@@ -85,7 +85,7 @@ export default function TableView({ onRowClick, table }) {
                 className="calibration-td"
                 style={{ backgroundColor: row.original.color }}
               >
-                <span>{row.original.id}</span>
+                <span>{dataColumnsMap.get(row.original.id).name}</span>
                 <span>Min: {row.original.minValue}</span>
                 <span>Max: {row.original.maxValue}</span>
                 <span>W: {row.original.offsetWidth.toFixed(2)}</span>
@@ -105,4 +105,5 @@ export default function TableView({ onRowClick, table }) {
 TableView.propTypes = {
   onRowClick: PropTypes.func.isRequired,
   table: PropTypes.object.isRequired,
+  dataColumnsMap: instanceOf(Map).isRequired,
 };
