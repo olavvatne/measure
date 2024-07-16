@@ -2,6 +2,8 @@ import React from "react";
 import PropTypes from "prop-types";
 import "./MeasurementsSetup.css";
 import { TrashSimple } from "@phosphor-icons/react";
+import AddMeasurementButton from "./AddMeasurementButton.jsx";
+import DeleteMeasurementButton from "./DeleteMeasurementButton.jsx";
 
 export default function MeasurementsSetup({ measurements, onSetupChange }) {
   return (
@@ -25,11 +27,15 @@ export default function MeasurementsSetup({ measurements, onSetupChange }) {
               onChange={(c) => onSetupChange(x.id, "color", c.target.value)}
             ></input>
           </label>
-          {/* <button>
-            <TrashSimple />
-          </button> */}
+          <DeleteMeasurementButton
+            measurementId={x.id}
+            measurementName={x.name}
+          />
         </li>
       ))}
+      <li className="add-container">
+        <AddMeasurementButton />
+      </li>
     </ul>
   );
 }

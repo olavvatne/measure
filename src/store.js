@@ -1,4 +1,5 @@
 import React, { createContext, useReducer } from "react";
+import { getUniqueShortId } from "./utils/guid";
 
 const initialState = {
   version: 2,
@@ -105,6 +106,52 @@ const StateProvider = ({ children }) => {
                 },
               },
             },
+          },
+        };
+      }
+      case "SetupNewMeasurementAction": {
+        const id = getUniqueShortId(
+          new Set(Object.keys(state.measurements.setup))
+        );
+        return {
+          ...state,
+          measurements: {
+            ...state.measurements,
+            setup: {
+              ...state.measurements.setup,
+              [id]: {
+                id: id,
+                color: "#000000",
+                name: "New",
+              },
+            },
+            history: {
+              ...state.measurements.history,
+              [id]: {
+                0: {
+                  fromDate: 0,
+                  offsetWidth: 200,
+                  offsetHeight: 100,
+                  x: 20,
+                  y: 100,
+                  minValue: 1,
+                  maxValue: 18,
+                },
+              },
+            },
+          },
+        };
+      }
+      case "DeleteMeasurementAction": {
+        const { id } = action.data;
+        const { [id]: _, ...newSetup } = state.measurements.setup;
+        const { [id]: __, ...newHistory } = state.measurements.history;
+        return {
+          ...state,
+          measurements: {
+            ...state.measurements,
+            setup: newSetup,
+            history: newHistory,
           },
         };
       }
