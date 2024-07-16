@@ -5,7 +5,7 @@ import { ICON_SIZE } from "./config";
 
 const tooltip = "Export project";
 
-export default function ExportButton({ data }) {
+export default function ExportButton({ data, measurementMapping }) {
   const buttonRef = useRef(null);
   const menuRef = useRef(null);
   function toggleDropdown() {
@@ -47,8 +47,10 @@ export default function ExportButton({ data }) {
           ref={menuRef}
           style={{ position: "absolute", top: "60px" }}
         >
-          <a onClick={() => exportToCsv(data)}>Export to csv</a>
-          <a onClick={() => matchAndExportToCsv(data)}>
+          <a onClick={() => exportToCsv(data, measurementMapping)}>
+            Export to csv
+          </a>
+          <a onClick={() => matchAndExportToCsv(data, measurementMapping)}>
             Match and export to csv
           </a>
         </div>

@@ -3,17 +3,27 @@ import Papa from "papaparse";
 import DateMatcher from "./date-matcher.js";
 import { createGuid } from "./guid.js";
 
-export function exportToCsv(rows) {
+function checkIfDuplicateExists(arr) {
+  return new Set(arr).size !== arr.length;
+}
+
+export function exportToCsv(rows, measurementMapping) {
+  if (checkIfDuplicateExists(Object.values(measurementMapping))) {
+    throw "Measurement names are not unique";
+  }
   const data = Object.values(rows)
     .sort((a, b) => a.date < b.date)
     .map((row) => {
       var m = dayjs.unix(row.date);
+      const values = Object.keys(measurementMapping).reduce((acc, key) => {
+        acc[measurementMapping[key]] = row.values[key] || "";
+        return acc;
+      }, {});
       return {
         date: m.format("MM/DD/YY"),
         time: m.format("HH:mm:ss"),
         unix: row.date,
-        og: row.values.og || "",
-        ow: row.values.ow || "",
+        ...values,
       };
     });
 
@@ -22,7 +32,11 @@ export function exportToCsv(rows) {
   exportFile(csv);
 }
 
-export async function matchAndExportToCsv(rows) {
+export async function matchAndExportToCsv(rows, measurementMapping) {
+  if (checkIfDuplicateExists(Object.values(measurementMapping))) {
+    throw "Measurement names are not unique";
+  }
+
   let fileHandle;
   try {
     const [handle] = await window.showOpenFilePicker({
@@ -50,24 +64,33 @@ export async function matchAndExportToCsv(rows) {
     })
     .sort((a, b) => a.date < b.date);
   const matcher = new DateMatcher();
+  const imageDates = data.map((d) => d.date);
+
+  // Use a map to guarantee order
+  const map = new Map(Object.entries(measurementMapping));
+
   Papa.parse(file, {
     complete: function (results) {
       if (results.data.length > 0) {
         const timestamps = results.data.map((r) => {
-          if (r.length == 2) {
+          if (r.length >= 2) {
             return dayjs(r[0] + " " + r[1], "MM/DD/YY HH:mm:ss").unix();
           }
           return null;
         });
-        const imageDates = data.map((d) => d.date);
+        // Add extra columns to header row
+        results.data[0].push(...map.values());
+        results.data[0].push("Comment");
+
         const matchings = matcher.match(timestamps, imageDates);
-        for (let i = 0; i < matchings.length; i++) {
-          const { from, to, comment } = matchings[i];
+        for (const { from, to, comment } of matchings) {
           const image = data[to];
-          const values = [image.values.og, image.values.ow];
-          if (comment) {
-            values.push.comment;
+          // Append all measurements and coment in correct order
+          const values = [];
+          for (const k of map.keys()) {
+            values.push(image.values[k] || "");
           }
+          values.push(comment || "");
           results.data[from].push(...values);
         }
 
