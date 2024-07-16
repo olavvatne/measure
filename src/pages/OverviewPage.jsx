@@ -9,7 +9,7 @@ export default function OverviewPage() {
   const globalState = useContext(store);
   const { state } = globalState;
 
-  const dataColumns = Object.values(state.measurements.setup);
+  const dataColumnsMap = new Map(Object.entries(state.measurements.setup));
 
   let navigate = useNavigate();
 
@@ -19,7 +19,7 @@ export default function OverviewPage() {
 
   const data = React.useMemo(() => {
     let measurementHistoryData = [];
-    for (const dc of dataColumns) {
+    for (const dc of dataColumnsMap.values()) {
       if (!state.measurements.history[dc.id]) {
         continue;
       }
@@ -44,7 +44,7 @@ export default function OverviewPage() {
 
   const [tableView, tableControls] = createMeasureTable(
     data,
-    dataColumns,
+    dataColumnsMap,
     onRowClick
   );
   return (
