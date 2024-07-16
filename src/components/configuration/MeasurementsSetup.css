@@ -8,9 +8,9 @@
   display: flex;
   flex: 1;
   justify-content: space-between;
-  /* align-items: center; */
   flex-direction: row;
   gap: 10px;
+  margin-bottom: 5px;
 }
 
 .measurements-setup input[type="color"] {
@@ -18,5 +18,13 @@
 }
 
 .measurements-setup button {
-  background-color: unset;
+  background-color: var(--background-body);
+}
+
+.measurements-setup button:hover {
+  background-color: var(--background-alt);
+}
+
+.add-container {
+  justify-content: flex-end !important;
 }
