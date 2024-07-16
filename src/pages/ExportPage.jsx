@@ -12,6 +12,13 @@ export default function OverviewPage() {
   if (Object.keys(state.images).length === 0) {
     return <NoProjectLoaded />;
   }
+  const measurementsMapping = Object.keys(state.measurements.setup).reduce(
+    (acc, key) => {
+      acc[key] = state.measurements.setup[key].name;
+      return acc;
+    },
+    {}
+  );
 
   return (
     <div className="export-page-container">
@@ -26,7 +33,10 @@ export default function OverviewPage() {
           timestamps column to do a best effort measurements to csv row
           timestamp matching.
         </p>
-        <ExportButton data={state.images} />
+        <ExportButton
+          data={state.images}
+          measurementMapping={measurementsMapping}
+        />
       </div>
     </div>
   );
