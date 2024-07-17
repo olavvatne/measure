@@ -1,24 +1,27 @@
-import React, { StrictMode, useContext } from "react";
+import React, { useContext } from "react";
 import { createRoot } from "react-dom/client";
 import {
   RouterProvider,
-  createHashRouter,
   createBrowserRouter,
+  createHashRouter,
 } from "react-router-dom";
+import { NoImageWithId } from "./components/redirect";
+import ExportPage from "./pages/ExportPage.jsx";
 import ImagePage from "./pages/ImagePage.jsx";
 import OverviewPage from "./pages/OverviewPage.jsx";
-import SetupPage from "./pages/SetupPage.jsx";
-import ExportPage from "./pages/ExportPage.jsx";
-import SettingsPage from "./pages/SettingsPage.jsx";
 import Root from "./pages/Root.jsx";
-import { MeasurementsProvider, MeasurementsContext } from "./store.js";
+import SettingsPage from "./pages/SettingsPage.jsx";
+import SetupPage from "./pages/SetupPage.jsx";
+import { ImagesContext, ImagesProvider } from "./state/ImagesContext.js";
+import {
+  MeasurementsContext,
+  MeasurementsProvider,
+} from "./state/MeasurementsContext.js";
+import { ViewProvider } from "./state/ViewContext.js";
 import { detectColorScheme } from "./utils/dark-mode";
 import ImageAccessApi from "./utils/image-access";
 import JsonAccessApi from "./utils/json-access";
 import { isElectron } from "./utils/platform-util";
-import { NoImageWithId } from "./components/redirect";
-import { ViewProvider } from "./state/ViewContext.js";
-import { ImagesContext, ImagesProvider } from "./state/ImagesContext.js";
 
 let createRouter = createHashRouter;
 if (!isElectron()) {

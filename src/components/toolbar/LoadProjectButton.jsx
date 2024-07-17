@@ -1,10 +1,10 @@
 import { UploadSimple } from "@phosphor-icons/react";
 import React, { useContext, useRef, useState } from "react";
 import { hydrateState } from "../../persist";
-import { MeasurementsContext } from "../../store";
-import { ICON_SIZE } from "./config";
-import { isElectron } from "../../utils/platform-util";
 import { ImagesContext } from "../../state/ImagesContext";
+import { MeasurementsContext } from "../../state/MeasurementsContext.js";
+import { isElectron } from "../../utils/platform-util";
+import { ICON_SIZE } from "./config";
 
 const loadTooltip = "Load exisiting project";
 

@@ -1,6 +1,6 @@
-import React, { useContext, useRef } from "react";
-import { MeasurementsContext } from "../../store";
 import { TrashSimple } from "@phosphor-icons/react";
+import React, { useContext, useRef } from "react";
+import { MeasurementsContext } from "../../state/MeasurementsContext.js";
 import "./DeleteMeasurementButton.css";
 
 const deleteTooltip = "Delete measurement from project";
