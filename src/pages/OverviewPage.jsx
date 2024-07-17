@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { createMeasureTable } from "../components/table";
-import { MeasurementsContext } from "../store.js";
+import { MeasurementsContext } from "../state/MeasurementsContext.js";
 import "./OverviewPage.css";
 import { NoProjectLoaded } from "../components/redirect";
 import { ImagesContext } from "../state/ImagesContext.js";

@@ -1,6 +1,9 @@
 import React, { createContext, useReducer } from "react";
-import { getUniqueShortId } from "./utils/guid";
-import { fluidContactTemplate, newMeasurementTemplate } from "./utils/template";
+import { getUniqueShortId } from "../utils/guid";
+import {
+  fluidContactTemplate,
+  newMeasurementTemplate,
+} from "../utils/template";
 
 const fluidTemplate = fluidContactTemplate();
 

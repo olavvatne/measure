@@ -1,9 +1,9 @@
 import { Image, Warning } from "@phosphor-icons/react";
 import React, { useContext, useState } from "react";
+import { ImagesContext } from "../../state/ImagesContext.js";
+import { MeasurementsContext } from "../../state/MeasurementsContext.js";
 import { isElectron } from "../../utils/platform-util";
 import { ICON_SIZE } from "./config";
-import { ImagesContext } from "../../state/ImagesContext.js";
-import { MeasurementsContext } from "../../store.js";
 
 const imageTooltip = "Open folder containing images";
 const notSupportedTooltip = "Measure only works in Chrome or Edge";

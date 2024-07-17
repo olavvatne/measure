@@ -1,10 +1,10 @@
 import { DownloadSimple } from "@phosphor-icons/react";
 import React, { useContext } from "react";
 import { persistState, SCHEMA_VERSION } from "../../persist";
-import { MeasurementsContext } from "../../store";
-import { ICON_SIZE } from "./config";
-import { isElectron } from "../../utils/platform-util";
 import { ImagesContext } from "../../state/ImagesContext";
+import { MeasurementsContext } from "../../state/MeasurementsContext.js";
+import { isElectron } from "../../utils/platform-util";
+import { ICON_SIZE } from "./config";
 
 const saveTooltip = "Save current project to file";
 

@@ -1,6 +1,6 @@
-import React, { useContext } from "react";
-import { MeasurementsContext } from "../../store";
 import { Plus } from "@phosphor-icons/react";
+import React, { useContext } from "react";
+import { MeasurementsContext } from "../../state/MeasurementsContext.js";
 
 const addTooltip = "Add new measurement to project";
 

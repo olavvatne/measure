@@ -1,9 +1,9 @@
 import React, { useContext } from "react";
+import MeasurementsSetup from "../components/configuration/MeasurementsSetup.jsx";
 import LoadProjectButton from "../components/toolbar/LoadProjectButton.jsx";
 import ReadFolderButton from "../components/toolbar/ReadFolderButton.jsx";
-import MeasurementsSetup from "../components/configuration/MeasurementsSetup.jsx";
+import { MeasurementsContext } from "../state/MeasurementsContext.js";
 import "./SetupPage.css";
-import { MeasurementsContext } from "../store.js";
 
 export default function SetupPage() {
   const measurementsContext = useContext(MeasurementsContext);

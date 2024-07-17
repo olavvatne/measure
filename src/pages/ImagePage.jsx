@@ -15,7 +15,7 @@ import {
   MeasurementImage,
   MovableLineMeasureArea,
 } from "../components/editor";
-import { MeasurementsContext } from "../store.js";
+import { MeasurementsContext } from "../state/MeasurementsContext.js";
 import { debounce } from "../utils/debounce.js";
 import { useKeypress } from "../utils/KeypressHook.jsx";
 import "./ImagePage.css";

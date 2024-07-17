@@ -1,9 +1,9 @@
 import React, { useContext } from "react";
-import { MeasurementsContext } from "../store.js";
-import SaveProjectButton from "../components/toolbar/SaveProjectButton.jsx";
-import ExportButton from "../components/toolbar/ExportButton.jsx";
-import "./ExportPage.css";
 import { NoProjectLoaded } from "../components/redirect";
+import ExportButton from "../components/toolbar/ExportButton.jsx";
+import SaveProjectButton from "../components/toolbar/SaveProjectButton.jsx";
+import { MeasurementsContext } from "../state/MeasurementsContext.js";
+import "./ExportPage.css";
 
 export default function OverviewPage() {
   const measurementsContext = useContext(MeasurementsContext);
@@ -12,13 +12,10 @@ export default function OverviewPage() {
   if (!state.projectLoaded) {
     return <NoProjectLoaded />;
   }
-  const measurementsMapping = Object.keys(state.setup).reduce(
-    (acc, key) => {
-      acc[key] = state.setup[key].name;
-      return acc;
-    },
-    {}
-  );
+  const measurementsMapping = Object.keys(state.setup).reduce((acc, key) => {
+    acc[key] = state.setup[key].name;
+    return acc;
+  }, {});
 
   return (
     <div className="export-page-container">
