@@ -1,5 +1,5 @@
 import { UploadSimple } from "@phosphor-icons/react";
-import React, { useContext } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { hydrateState } from "../../persist";
 import { MeasurementsContext } from "../../store";
 import { ICON_SIZE } from "./config";
@@ -9,6 +9,8 @@ import { ImagesContext } from "../../state/ImagesContext";
 const loadTooltip = "Load exisiting project";
 
 export default function LoadProjectButton() {
+  const dialogRef = useRef(null);
+  const [error, setError] = useState(null);
   const measurementsContext = useContext(MeasurementsContext);
   const imagesContext = useContext(ImagesContext);
   const { dispatch } = measurementsContext;
@@ -25,18 +27,34 @@ export default function LoadProjectButton() {
       setImages(data.images);
       dispatch({ type: "HydrateAction", data: data.measurements });
     } catch (error) {
-      console.error(error);
+      console.err(error);
+      setError(error.message);
+      dialogRef.current.showModal();
     }
   }
 
   return (
-    <button
-      disabled={!isFileAccessSupport}
-      title={loadTooltip}
-      onClick={onLoadAppData}
-    >
-      <UploadSimple size={ICON_SIZE} />
-      Load project
-    </button>
+    <>
+      <button
+        disabled={!isFileAccessSupport}
+        title={loadTooltip}
+        onClick={onLoadAppData}
+      >
+        <UploadSimple size={ICON_SIZE} />
+        Load project
+      </button>
+      <dialog ref={dialogRef}>
+        <p>Could not load project:</p>
+        <p>{error}</p>
+        <button
+          onClick={() => {
+            setError(null);
+            dialogRef.current?.close();
+          }}
+        >
+          Close
+        </button>
+      </dialog>
+    </>
   );
 }
