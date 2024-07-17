@@ -1,20 +1,20 @@
 import React, { useContext } from "react";
-import { store } from "../store.js";
+import { MeasurementsContext } from "../store.js";
 import SaveProjectButton from "../components/toolbar/SaveProjectButton.jsx";
 import ExportButton from "../components/toolbar/ExportButton.jsx";
 import "./ExportPage.css";
 import { NoProjectLoaded } from "../components/redirect";
 
 export default function OverviewPage() {
-  const globalState = useContext(store);
-  const { state } = globalState;
+  const measurementsContext = useContext(MeasurementsContext);
+  const { state } = measurementsContext;
 
-  if (Object.keys(state.images).length === 0) {
+  if (!state.projectLoaded) {
     return <NoProjectLoaded />;
   }
-  const measurementsMapping = Object.keys(state.measurements.setup).reduce(
+  const measurementsMapping = Object.keys(state.setup).reduce(
     (acc, key) => {
-      acc[key] = state.measurements.setup[key].name;
+      acc[key] = state.setup[key].name;
       return acc;
     },
     {}
@@ -34,7 +34,7 @@ export default function OverviewPage() {
           timestamp matching.
         </p>
         <ExportButton
-          data={state.measurements.values}
+          data={state.values}
           measurementMapping={measurementsMapping}
         />
       </div>

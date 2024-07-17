@@ -1,34 +1,37 @@
 import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { createMeasureTable } from "../components/table";
-import { store } from "../store.js";
+import { MeasurementsContext } from "../store.js";
 import "./OverviewPage.css";
 import { NoProjectLoaded } from "../components/redirect";
+import { ImagesContext } from "../state/ImagesContext.js";
 
 export default function OverviewPage() {
-  const globalState = useContext(store);
-  const { state } = globalState;
+  const measurementsContext = useContext(MeasurementsContext);
+  const imagesContext = useContext(ImagesContext);
+  const { state } = measurementsContext;
+  const { images } = imagesContext;
 
-  const dataColumnsMap = new Map(Object.entries(state.measurements.setup));
+  const dataColumnsMap = new Map(Object.entries(state.setup));
 
   let navigate = useNavigate();
 
-  if (Object.keys(state.images).length === 0) {
+  if (!state.projectLoaded) {
     return <NoProjectLoaded />;
   }
 
   const data = React.useMemo(() => {
     let measurementHistoryData = [];
-    let rows = { ...state.images };
-    for (const mv of Object.values(state.measurements.values)) {
+    let rows = { ...images };
+    for (const mv of Object.values(state.values)) {
       rows[mv.id].values = mv.data;
     }
 
     for (const dc of dataColumnsMap.values()) {
-      if (!state.measurements.history[dc.id]) {
+      if (!state.history[dc.id]) {
         continue;
       }
-      const values = Object.values(state.measurements.history[dc.id])
+      const values = Object.values(state.history[dc.id])
         .filter((m) => m.fromDate > 0)
         .map((m) => {
           m.id = dc.id;
@@ -39,7 +42,7 @@ export default function OverviewPage() {
       measurementHistoryData = measurementHistoryData.concat(values);
     }
     return [...measurementHistoryData, ...Object.values(rows)];
-  }, [state.measurements]);
+  }, [state]);
 
   function onRowClick(row) {
     if (!row?.original?.path) {

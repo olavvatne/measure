@@ -15,7 +15,7 @@ import {
   MeasurementImage,
   MovableLineMeasureArea,
 } from "../components/editor";
-import { store } from "../store.js";
+import { MeasurementsContext } from "../store.js";
 import { debounce } from "../utils/debounce.js";
 import { useKeypress } from "../utils/KeypressHook.jsx";
 import "./ImagePage.css";
@@ -32,8 +32,8 @@ const ICON_SIZE = 24;
 
 export default function ImagePage() {
   const { record, areas, image } = useLoaderData();
-  const globalState = useContext(store);
-  const { dispatch, state } = globalState;
+  const measurementsContext = useContext(MeasurementsContext);
+  const { dispatch, state } = measurementsContext;
   const [imageMode, setImageMode] = useState(false);
   const [lockMode, setLockMode] = useState(false);
   const [isAutoSaving, setIsAutoSaving] = useState(false);
@@ -155,7 +155,7 @@ export default function ImagePage() {
       <ImageTimestamp imageDate={image.date} />
       <ImageAutoSave isAutoSaving={isAutoSaving} />
       <ImageMoverArea imageMode={imageMode}>
-        {Object.values(state.measurements.setup).map((x) => (
+        {Object.values(state.setup).map((x) => (
           <MovableLineMeasureArea
             key={
               JSON.stringify(data.boundaryAreas?.[x.id]) +
