@@ -16,7 +16,7 @@ export function exportToCsv(rows, measurementMapping) {
     .map((row) => {
       var m = dayjs.unix(row.date);
       const values = Object.keys(measurementMapping).reduce((acc, key) => {
-        acc[measurementMapping[key]] = row.values[key] || "";
+        acc[measurementMapping[key]] = row.data[key] || "";
         return acc;
       }, {});
       return {
@@ -58,11 +58,7 @@ export async function matchAndExportToCsv(rows, measurementMapping) {
 
   const file = await fileHandle.getFile();
 
-  const data = Object.values(rows)
-    .filter((img) => {
-      return Object.keys(img.values).length > 0;
-    })
-    .sort((a, b) => a.date < b.date);
+  const data = Object.values(rows).sort((a, b) => a.date < b.date);
   const matcher = new DateMatcher();
   const imageDates = data.map((d) => d.date);
 
@@ -84,11 +80,11 @@ export async function matchAndExportToCsv(rows, measurementMapping) {
 
         const matchings = matcher.match(timestamps, imageDates);
         for (const { from, to, comment } of matchings) {
-          const image = data[to];
+          const row = data[to];
           // Append all measurements and coment in correct order
           const values = [];
           for (const k of map.keys()) {
-            values.push(image.values[k] || "");
+            values.push(row.data[k] || "");
           }
           values.push(comment || "");
           results.data[from].push(...values);

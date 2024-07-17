@@ -29,10 +29,8 @@ export default function ReadFolderButton() {
           const prevId = i <= 0 ? null : await createHash(files[i - 1].path);
           data[guid] = {
             id: guid,
-            type: "data",
             path: files[i].path,
             date: dayjs(files[i].date).unix(),
-            values: {},
             nextId,
             prevId,
           };

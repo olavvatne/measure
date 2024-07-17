@@ -55,12 +55,17 @@ const AppRoot = () => {
       path: "/image/:guid",
       element: <ImagePage />,
       loader: ({ params }) => {
-        const record = state.images[params.guid];
-        if (!record) {
+        const image = state.images[params.guid];
+        if (!image) {
           throw "Not found";
         }
-        const areas = getCurrentBoundaryAreas(record?.date || 0);
-        return { record, areas };
+        const record = state.measurements.values[image.date] || {
+          date: image?.date,
+          id: params.guid,
+          data: {},
+        };
+        const areas = getCurrentBoundaryAreas(image.date || 0);
+        return { image, areas, record };
       },
       errorElement: <NoImageWithId />,
     },

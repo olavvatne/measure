@@ -19,6 +19,11 @@ export default function OverviewPage() {
 
   const data = React.useMemo(() => {
     let measurementHistoryData = [];
+    let rows = { ...state.images };
+    for (const mv of Object.values(state.measurements.values)) {
+      rows[mv.id].values = mv.data;
+    }
+
     for (const dc of dataColumnsMap.values()) {
       if (!state.measurements.history[dc.id]) {
         continue;
@@ -28,12 +33,13 @@ export default function OverviewPage() {
         .map((m) => {
           m.id = dc.id;
           m.color = dc.color;
+          m.type = "calibration";
           return m;
         });
       measurementHistoryData = measurementHistoryData.concat(values);
     }
-    return [...measurementHistoryData, ...Object.values(state.images)];
-  }, [state.images]);
+    return [...measurementHistoryData, ...Object.values(rows)];
+  }, [state.measurements]);
 
   function onRowClick(row) {
     if (!row?.original?.path) {

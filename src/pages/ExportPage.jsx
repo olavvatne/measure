@@ -34,7 +34,7 @@ export default function OverviewPage() {
           timestamp matching.
         </p>
         <ExportButton
-          data={state.images}
+          data={state.measurements.values}
           measurementMapping={measurementsMapping}
         />
       </div>

@@ -16,10 +16,9 @@ export default function createMeasureTable(data, dataColumnsMap, onRowClick) {
     pageIndex: 0,
     pageSize: 20,
   });
-
   const columnHelper = createColumnHelper();
   const dataColumnAccessors = dataColumnsMap.values().map((dc) =>
-    columnHelper.accessor((row) => row.values?.[dc.id], {
+    columnHelper.accessor((row) => row?.values?.[dc.id], {
       id: dc.id,
       size: 60,
       cell: (info) => info.getValue()?.toFixed(3),
