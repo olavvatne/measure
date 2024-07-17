@@ -11,13 +11,14 @@ import SetupPage from "./pages/SetupPage.jsx";
 import ExportPage from "./pages/ExportPage.jsx";
 import SettingsPage from "./pages/SettingsPage.jsx";
 import Root from "./pages/Root.jsx";
-import { StateProvider, store } from "./store.js";
+import { MeasurementsProvider, MeasurementsContext } from "./store.js";
 import { detectColorScheme } from "./utils/dark-mode";
 import ImageAccessApi from "./utils/image-access";
 import JsonAccessApi from "./utils/json-access";
 import { isElectron } from "./utils/platform-util";
 import { NoImageWithId } from "./components/redirect";
 import { ViewProvider } from "./state/ViewContext.js";
+import { ImagesContext, ImagesProvider } from "./state/ImagesContext.js";
 
 let createRouter = createHashRouter;
 if (!isElectron()) {
@@ -26,8 +27,11 @@ if (!isElectron()) {
   createRouter = createBrowserRouter;
 }
 const AppRoot = () => {
-  const globalState = useContext(store);
-  const { state, getCurrentBoundaryAreas } = globalState;
+  const measurementsContext = useContext(MeasurementsContext);
+  const imagesContext = useContext(ImagesContext);
+  const { state, getCurrentBoundaryAreas } = measurementsContext;
+  const { images } = imagesContext;
+
   const router = createRouter([
     {
       path: "/",
@@ -55,11 +59,11 @@ const AppRoot = () => {
       path: "/image/:guid",
       element: <ImagePage />,
       loader: ({ params }) => {
-        const image = state.images[params.guid];
+        const image = images[params.guid];
         if (!image) {
           throw "Not found";
         }
-        const record = state.measurements.values[image.date] || {
+        const record = state.values[image.date] || {
           date: image?.date,
           id: params.guid,
           data: {},
@@ -79,10 +83,12 @@ detectColorScheme();
 const container = document.getElementById("app-container");
 createRoot(container).render(
   // <StrictMode>
-  <StateProvider>
-    <ViewProvider>
-      <AppRoot />
-    </ViewProvider>
-  </StateProvider>
+  <ImagesProvider>
+    <MeasurementsProvider>
+      <ViewProvider>
+        <AppRoot />
+      </ViewProvider>
+    </MeasurementsProvider>
+  </ImagesProvider>
   // </StrictMode>
 );

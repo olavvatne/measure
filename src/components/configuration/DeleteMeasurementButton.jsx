@@ -1,5 +1,5 @@
 import React, { useContext, useRef } from "react";
-import { store } from "../../store";
+import { MeasurementsContext } from "../../store";
 import { TrashSimple } from "@phosphor-icons/react";
 import "./DeleteMeasurementButton.css";
 
@@ -10,8 +10,8 @@ export default function DeleteMeasurementButton({
   measurementId,
 }) {
   const dialogRef = useRef(null);
-  const globalState = useContext(store);
-  const { dispatch } = globalState;
+  const measurementsContext = useContext(MeasurementsContext);
+  const { dispatch } = measurementsContext;
 
   function openDialog() {
     if (dialogRef.current) {

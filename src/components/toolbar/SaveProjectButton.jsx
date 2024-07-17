@@ -1,21 +1,32 @@
 import { DownloadSimple } from "@phosphor-icons/react";
 import React, { useContext } from "react";
-import { persistState } from "../../persist";
-import { store } from "../../store";
+import { persistState, SCHEMA_VERSION } from "../../persist";
+import { MeasurementsContext } from "../../store";
 import { ICON_SIZE } from "./config";
 import { isElectron } from "../../utils/platform-util";
+import { ImagesContext } from "../../state/ImagesContext";
 
 const saveTooltip = "Save current project to file";
 
 export default function SaveProjectButton() {
-  const globalState = useContext(store);
-  const { state } = globalState;
+  const measurementsContext = useContext(MeasurementsContext);
+  const imagesContext = useContext(ImagesContext);
+  const { state } = measurementsContext;
+  const { images } = imagesContext;
   const isFileAccessSupport = window.showSaveFilePicker || isElectron();
   return (
     <button
       title={saveTooltip}
       disabled={!isFileAccessSupport}
-      onClick={() => window.fileApi.storeJson(persistState(state))}
+      onClick={() =>
+        window.fileApi.storeJson(
+          persistState({
+            version: SCHEMA_VERSION,
+            measurements: state,
+            images: images,
+          })
+        )
+      }
     >
       <DownloadSimple size={ICON_SIZE} />
       Save project

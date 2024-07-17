@@ -3,11 +3,11 @@ import LoadProjectButton from "../components/toolbar/LoadProjectButton.jsx";
 import ReadFolderButton from "../components/toolbar/ReadFolderButton.jsx";
 import MeasurementsSetup from "../components/configuration/MeasurementsSetup.jsx";
 import "./SetupPage.css";
-import { store } from "../store.js";
+import { MeasurementsContext } from "../store.js";
 
 export default function SetupPage() {
-  const globalState = useContext(store);
-  const { dispatch, state } = globalState;
+  const measurementsContext = useContext(MeasurementsContext);
+  const { dispatch, state } = measurementsContext;
   return (
     <div className="setup-page-container">
       <div>
@@ -18,7 +18,7 @@ export default function SetupPage() {
         <LoadProjectButton />
         <ReadFolderButton />
         <MeasurementsSetup
-          measurements={Object.values(state.measurements.setup)}
+          measurements={Object.values(state.setup)}
           onSetupChange={(id, key, value) =>
             dispatch({
               type: "MeasurementSetupChangeAction",
