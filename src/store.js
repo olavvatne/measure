@@ -1,5 +1,8 @@
 import React, { createContext, useReducer } from "react";
 import { getUniqueShortId } from "./utils/guid";
+import { fluidContactTemplate, newMeasurementTemplate } from "./utils/template";
+
+const fluidTemplate = fluidContactTemplate();
 
 const initialState = {
   version: 2,
@@ -9,42 +12,8 @@ const initialState = {
   },
   measurements: {
     values: {},
-    setup: {
-      og: {
-        id: "og",
-        color: "#FF0000",
-        name: "O/G",
-      },
-      ow: {
-        id: "ow",
-        color: "#0000FF",
-        name: "O/W",
-      },
-    },
-    history: {
-      og: {
-        0: {
-          fromDate: 0,
-          offsetWidth: 200,
-          offsetHeight: 100,
-          x: 20,
-          y: 100,
-          minValue: 1,
-          maxValue: 18,
-        },
-      },
-      ow: {
-        0: {
-          fromDate: 0,
-          x: 320,
-          y: 100,
-          offsetWidth: 200,
-          offsetHeight: 100,
-          minValue: 1,
-          maxValue: 18,
-        },
-      },
-    },
+    setup: fluidTemplate.setup,
+    history: fluidTemplate.history,
   },
 };
 const store = createContext(initialState);
@@ -117,31 +86,18 @@ const StateProvider = ({ children }) => {
         const id = getUniqueShortId(
           new Set(Object.keys(state.measurements.setup))
         );
+        const newTemplate = newMeasurementTemplate(id);
         return {
           ...state,
           measurements: {
             ...state.measurements,
             setup: {
               ...state.measurements.setup,
-              [id]: {
-                id: id,
-                color: "#000000",
-                name: "New",
-              },
+              ...newTemplate.setup,
             },
             history: {
               ...state.measurements.history,
-              [id]: {
-                0: {
-                  fromDate: 0,
-                  offsetWidth: 200,
-                  offsetHeight: 100,
-                  x: 20,
-                  y: 100,
-                  minValue: 1,
-                  maxValue: 18,
-                },
-              },
+              ...newTemplate.history,
             },
           },
         };
