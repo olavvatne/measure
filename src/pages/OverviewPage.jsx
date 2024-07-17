@@ -20,12 +20,9 @@ export default function OverviewPage() {
     return <NoProjectLoaded />;
   }
 
-  const data = React.useMemo(() => {
+  const memoedRows = React.useMemo(() => {
     let measurementHistoryData = [];
     let rows = { ...images };
-    for (const mv of Object.values(state.values)) {
-      rows[mv.id].values = mv.data;
-    }
 
     for (const dc of dataColumnsMap.values()) {
       if (!state.history[dc.id]) {
@@ -42,7 +39,7 @@ export default function OverviewPage() {
       measurementHistoryData = measurementHistoryData.concat(values);
     }
     return [...measurementHistoryData, ...Object.values(rows)];
-  }, [state]);
+  }, [state.history]);
 
   function onRowClick(row) {
     if (!row?.original?.path) {
@@ -52,7 +49,8 @@ export default function OverviewPage() {
   }
 
   const [tableView, tableControls] = createMeasureTable(
-    data,
+    memoedRows,
+    state.values,
     dataColumnsMap,
     onRowClick
   );

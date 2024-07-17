@@ -46,16 +46,20 @@ const MeasurementsProvider = ({ children }) => {
         return newState;
       case "RecordMeasurementsAction": {
         const { imageId, dateUnix, measurements } = action.data;
-        return {
-          ...state,
-          values: {
-            ...state.values,
+        const values = Object.keys(measurements).reduce((acc, key) => {
+          acc[key] = {
+            ...state.values[key],
             [dateUnix]: {
+              value: measurements[key],
               id: imageId,
               date: dateUnix,
-              data: measurements,
             },
-          },
+          };
+          return acc;
+        }, state.values);
+        return {
+          ...state,
+          values: values,
         };
       }
       case "ChangeBoundaryAreaAction": {
@@ -94,10 +98,12 @@ const MeasurementsProvider = ({ children }) => {
         const { id } = action.data;
         const { [id]: _, ...newSetup } = state.setup;
         const { [id]: __, ...newHistory } = state.history;
+        const { [id]: ___, ...newValues } = state.values;
         return {
           ...state,
           setup: newSetup,
           history: newHistory,
+          values: newValues,
         };
       }
       default:
