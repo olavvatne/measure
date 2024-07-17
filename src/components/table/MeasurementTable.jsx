@@ -11,17 +11,22 @@ import {
   createColumnHelper,
 } from "@tanstack/react-table";
 
-export default function createMeasureTable(data, dataColumnsMap, onRowClick) {
+export default function createMeasureTable(
+  data,
+  measurements,
+  dataColumnsMap,
+  onRowClick
+) {
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 20,
   });
   const columnHelper = createColumnHelper();
   const dataColumnAccessors = dataColumnsMap.values().map((dc) =>
-    columnHelper.accessor((row) => row?.values?.[dc.id], {
+    columnHelper.accessor((row) => row.date || row.fromDate, {
       id: dc.id,
       size: 60,
-      cell: (info) => info.getValue()?.toFixed(3),
+      cell: (info) => measurements[dc.id]?.[info.getValue()]?.value?.toFixed(3),
       header: () => <span>{dc.name}</span>,
     })
   );

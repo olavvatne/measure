@@ -3,40 +3,14 @@ import Papa from "papaparse";
 import DateMatcher from "./date-matcher.js";
 import { createGuid } from "./guid.js";
 
-function checkIfDuplicateExists(arr) {
-  return new Set(arr).size !== arr.length;
-}
-
-export function exportToCsv(rows, measurementMapping) {
-  if (checkIfDuplicateExists(Object.values(measurementMapping))) {
-    throw "Measurement names are not unique";
-  }
-  const data = Object.values(rows)
-    .sort((a, b) => a.date < b.date)
-    .map((row) => {
-      var m = dayjs.unix(row.date);
-      const values = Object.keys(measurementMapping).reduce((acc, key) => {
-        acc[measurementMapping[key]] = row.data[key] || "";
-        return acc;
-      }, {});
-      return {
-        date: m.format("MM/DD/YY"),
-        time: m.format("HH:mm:ss"),
-        unix: row.date,
-        ...values,
-      };
-    });
-
+export function exportToCsv(rows) {
+  const data = rows.sort((a, b) => a.unix < b.unix);
   const csv = Papa.unparse(data);
 
   exportFile(csv);
 }
 
 export async function matchAndExportToCsv(rows, measurementMapping) {
-  if (checkIfDuplicateExists(Object.values(measurementMapping))) {
-    throw "Measurement names are not unique";
-  }
-
   let fileHandle;
   try {
     const [handle] = await window.showOpenFilePicker({
@@ -57,10 +31,9 @@ export async function matchAndExportToCsv(rows, measurementMapping) {
   }
 
   const file = await fileHandle.getFile();
-
-  const data = Object.values(rows).sort((a, b) => a.date < b.date);
+  const data = rows.sort((a, b) => a.unix < b.unix);
   const matcher = new DateMatcher();
-  const imageDates = data.map((d) => d.date);
+  const imageDates = data.map((d) => d.unix);
 
   // Use a map to guarantee order
   const map = new Map(Object.entries(measurementMapping));
@@ -77,14 +50,13 @@ export async function matchAndExportToCsv(rows, measurementMapping) {
         // Add extra columns to header row
         results.data[0].push(...map.values());
         results.data[0].push("Comment");
-
         const matchings = matcher.match(timestamps, imageDates);
         for (const { from, to, comment } of matchings) {
           const row = data[to];
           // Append all measurements and coment in correct order
           const values = [];
-          for (const k of map.keys()) {
-            values.push(row.data[k] || "");
+          for (const k of map.values()) {
+            values.push(row[k] || "");
           }
           values.push(comment || "");
           results.data[from].push(...values);

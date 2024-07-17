@@ -45,7 +45,6 @@ export default function ImagePage() {
   });
 
   const saveData = useCallback((data) => {
-    console.log("auto-save");
     dispatch({
       type: "RecordMeasurementsAction",
       data: {

@@ -66,11 +66,17 @@ const AppRoot = () => {
         if (!image) {
           throw "Not found";
         }
-        const record = state.values[image.date] || {
-          date: image?.date,
+        const record = {
+          date: image.date,
           id: params.guid,
           data: {},
         };
+        for (const m of Object.keys(state.values)) {
+          const measurementData = state.values[m]?.[image.date];
+          if (measurementData) {
+            record.data[m] = measurementData.value;
+          }
+        }
         const areas = getCurrentBoundaryAreas(image.date || 0);
         return { image, areas, record };
       },
