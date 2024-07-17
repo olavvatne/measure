@@ -31,16 +31,16 @@ const lockTooltip = "Lock mode disabled movement of widgets";
 const ICON_SIZE = 24;
 
 export default function ImagePage() {
-  const { record, areas } = useLoaderData();
+  const { record, areas, image } = useLoaderData();
   const globalState = useContext(store);
   const { dispatch, state } = globalState;
   const [imageMode, setImageMode] = useState(false);
   const [lockMode, setLockMode] = useState(false);
   const [isAutoSaving, setIsAutoSaving] = useState(false);
   const [data, setData] = useState({
-    record: record,
+    image: image,
     isDirty: false,
-    measurements: record?.values,
+    measurements: record.data,
     boundaryAreas: areas,
   });
 
@@ -49,8 +49,9 @@ export default function ImagePage() {
     dispatch({
       type: "RecordMeasurementsAction",
       data: {
-        imageId: data.record.id,
+        imageId: data.image.id,
         measurements: data.measurements,
+        dateUnix: data.image.date,
       },
     });
     if (!data.boundaryAreas) {
@@ -67,7 +68,7 @@ export default function ImagePage() {
         data: {
           measurementId: mid,
           boundaryArea: data.boundaryAreas[mid],
-          dateUnix: data.record.date,
+          dateUnix: data.image.date,
         },
       });
       setIsAutoSaving(false);
@@ -85,12 +86,12 @@ export default function ImagePage() {
 
   useEffect(() => {
     setData({
-      record: record,
-      measurements: record?.values,
+      image: image,
+      measurements: record.data,
       boundaryAreas: areas,
       isDirty: false,
     });
-  }, [record.id]);
+  }, [image.id]);
 
   useKeypress(
     "q",
@@ -131,18 +132,18 @@ export default function ImagePage() {
           </button>
         </div>
         <div className="controls">
-          {record?.prevId ? (
+          {image?.prevId ? (
             <ImageNavigateButton
-              path={"/image/" + record.prevId}
+              path={"/image/" + image.prevId}
               tooltip={previousTooltip}
               hotkey="ArrowLeft"
             >
               <ArrowLeft size={ICON_SIZE} />
             </ImageNavigateButton>
           ) : null}
-          {record?.nextId ? (
+          {image?.nextId ? (
             <ImageNavigateButton
-              path={"/image/" + record.nextId}
+              path={"/image/" + image.nextId}
               tooltip={nextTooltip}
               hotkey="ArrowRight"
             >
@@ -151,7 +152,7 @@ export default function ImagePage() {
           ) : null}
         </div>
       </div>
-      <ImageTimestamp imageDate={record.date} />
+      <ImageTimestamp imageDate={image.date} />
       <ImageAutoSave isAutoSaving={isAutoSaving} />
       <ImageMoverArea imageMode={imageMode}>
         {Object.values(state.measurements.setup).map((x) => (
@@ -159,10 +160,10 @@ export default function ImagePage() {
             key={
               JSON.stringify(data.boundaryAreas?.[x.id]) +
               JSON.stringify(data.measurements?.[x.id] || null) +
-              record.id +
+              image.id +
               [x.id]
             }
-            imageId={record.id}
+            imageId={image.id}
             name={x.id}
             displayName={x.name}
             color={x.color}
@@ -185,7 +186,7 @@ export default function ImagePage() {
             }
           />
         ))}
-        <MeasurementImage imagePath={record.path} />
+        <MeasurementImage imagePath={image.path} />
       </ImageMoverArea>
     </div>
   );

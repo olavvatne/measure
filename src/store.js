@@ -8,6 +8,7 @@ const initialState = {
     name: "",
   },
   measurements: {
+    values: {},
     setup: {
       og: {
         id: "og",
@@ -76,18 +77,21 @@ const StateProvider = ({ children }) => {
         newState = { ...state, images: action.data };
         return newState;
       case "RecordMeasurementsAction": {
-        const { imageId, measurements } = action.data;
-        const newImages = {
-          ...state.images,
-          [imageId]: {
-            ...state.images[imageId],
+        const { imageId, dateUnix, measurements } = action.data;
+        return {
+          ...state,
+          measurements: {
+            ...state.measurements,
             values: {
-              ...state.images[imageId]?.values,
-              ...measurements,
+              ...state.measurements.values,
+              [dateUnix]: {
+                id: imageId,
+                date: dateUnix,
+                data: measurements,
+              },
             },
           },
         };
-        return { ...state, images: newImages };
       }
       case "ChangeBoundaryAreaAction": {
         const { measurementId, boundaryArea, dateUnix } = action.data;
@@ -188,7 +192,6 @@ const StateProvider = ({ children }) => {
     }
     return boundaries;
   }
-
   return (
     <Provider
       value={{

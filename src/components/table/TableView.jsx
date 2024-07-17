@@ -71,7 +71,7 @@ export default function TableView({ onRowClick, table, dataColumnsMap }) {
       <tbody>
         {table.getRowModel().rows.map((row) => (
           <tr key={row.id} onClick={() => onRowClick(row)}>
-            {row.original.type === "data" ? (
+            {row.original.type !== "calibration" ? (
               row
                 .getVisibleCells()
                 .map((cell) => (
