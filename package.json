@@ -4,7 +4,6 @@
   "version": "0.3.1",
   "description": "Measure values from images",
   "main": ".webpack/main",
-  "homepage": "https://olavvatne.github.io/measure/",
   "scripts": {
     "start": "electron-forge start",
     "start-web": "webpack serve --config ./webpack.web.config.js --mode development",
