@@ -55,8 +55,9 @@ export default function OverviewPage() {
     onRowClick
   );
   return (
-    <div>
-      {tableView}
+    <div className="overview-container">
+      <div className="overview-table-container">{tableView}</div>
+
       {tableControls}
     </div>
   );

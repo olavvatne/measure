@@ -1,12 +1,20 @@
+.overview-container {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: stretch;
+  height: 100%;
+}
 .table-pagination {
   border-top: 1px solid var(--border);
   display: flex;
   align-items: center;
   gap: 8px;
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 100%;
   padding: 5px;
   background-color: var(--background-body);
+}
+
+.overview-table-container {
+  flex: 1;
+  overflow-y: auto;
 }
