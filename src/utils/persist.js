@@ -6,8 +6,12 @@ export function persistState(state) {
 
 export function hydrateState(state) {
   const parsed = JSON.parse(state);
-  if (parsed?.version !== SCHEMA_VERSION) {
-    throw Error("Project file not at version " + SCHEMA_VERSION);
+
+  if (!parsed) {
+    throw new Error("Could not parse");
+  }
+  if (parsed.version !== SCHEMA_VERSION) {
+    throw new Error("Project file not at version " + SCHEMA_VERSION);
   }
   return parsed;
 }

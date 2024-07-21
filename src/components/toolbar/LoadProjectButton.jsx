@@ -1,6 +1,6 @@
 import { UploadSimple } from "@phosphor-icons/react";
 import React, { useContext, useRef, useState } from "react";
-import { hydrateState } from "../../persist";
+import { hydrateState } from "../../utils/persist.js";
 import { ImagesContext } from "../../state/ImagesContext";
 import { MeasurementsContext } from "../../state/MeasurementsContext.js";
 import { isElectron } from "../../utils/platform-util";

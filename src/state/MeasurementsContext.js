@@ -113,11 +113,11 @@ const MeasurementsProvider = ({ children }) => {
 
   function getCurrentBoundaryArea(id, dateUnix) {
     if (dateUnix === undefined) {
-      throw Error("unix time not provided");
+      throw new Error("unix time not provided");
     }
 
     if (!state.setup[id]) {
-      throw Error(`Measurement with id ${id} does not exist`);
+      throw new Error(`Measurement with id ${id} does not exist`);
     }
     const closestMatch = Object.values(state.history[id]).reduce(function (
       prev,

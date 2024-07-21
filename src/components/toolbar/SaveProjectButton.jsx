@@ -1,6 +1,6 @@
 import { DownloadSimple } from "@phosphor-icons/react";
 import React, { useContext } from "react";
-import { persistState, SCHEMA_VERSION } from "../../persist";
+import { persistState, SCHEMA_VERSION } from "../../utils/persist.js";
 import { ImagesContext } from "../../state/ImagesContext";
 import { MeasurementsContext } from "../../state/MeasurementsContext.js";
 import { isElectron } from "../../utils/platform-util";
