@@ -1,10 +1,6 @@
 import React, { useContext } from "react";
 import { createRoot } from "react-dom/client";
-import {
-  RouterProvider,
-  createBrowserRouter,
-  createHashRouter,
-} from "react-router-dom";
+import { RouterProvider, createHashRouter } from "react-router-dom";
 import { NoImageWithId } from "./components/redirect";
 import ExportPage from "./pages/ExportPage.jsx";
 import ImagePage from "./pages/ImagePage.jsx";
@@ -23,19 +19,18 @@ import ImageAccessApi from "./utils/image-access";
 import JsonAccessApi from "./utils/json-access";
 import { isElectron } from "./utils/platform-util";
 
-let createRouter = createHashRouter;
 if (!isElectron()) {
   window.imageApi = new ImageAccessApi();
   window.fileApi = new JsonAccessApi();
-  createRouter = createBrowserRouter;
 }
+
 const AppRoot = () => {
   const measurementsContext = useContext(MeasurementsContext);
   const imagesContext = useContext(ImagesContext);
   const { state, getCurrentBoundaryAreas } = measurementsContext;
   const { images } = imagesContext;
 
-  const router = createRouter([
+  const router = createHashRouter([
     {
       path: "/",
       element: <Root />,

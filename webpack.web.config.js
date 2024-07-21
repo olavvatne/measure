@@ -30,7 +30,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, "./dist"),
     filename: "[name].[chunkhash].bundle.js",
-    publicPath: ".",
+    publicPath: "/",
   },
   devServer: {
     static: path.resolve(__dirname, "./src"),
